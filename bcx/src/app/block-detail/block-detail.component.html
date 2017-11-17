@@ -1,0 +1,55 @@
+<div class="details" *ngIf="block">
+
+	<h4>
+		{{ block.id }} Details
+		<button (click)="goBack()">Back</button>
+	</h4>
+	<div class="divTable">
+		<div class="divRow">
+			<div class="divCell1"><span>id:</span></div>
+			<div class="divCell">{{block.id}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Miner:</span></div>
+			<div class="divCell">{{block.miner}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Difficulty:</span></div>
+			<div class="divCell">{{block.difficulty}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Gas Limit:</span></div>
+			<div class="divCell">{{block.id}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Gas Used:</span></div>
+			<div class="divCell">{{block.gasUsed}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Hash:</span></div>
+			<div class="divCell">{{block.hash}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Nonce:</span></div>
+			<div class="divCell">{{block.nonce}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Size:</span></div>
+			<div class="divCell">{{block.size}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Timestamp:</span></div>
+			<div class="divCell">{{block.timestamp}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Total Difficulty:</span></div>
+			<div class="divCell">{{block.totalDifficulty}}</div>
+		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Transactions:</span></div>
+			<div class="divCell">{{block.transactions}}</div>
+		</div>
+	</div>
+
+</div>
+	
