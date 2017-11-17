@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
     static currBlock: number;
     currentBlock: number;
     currentTrans: Array<string>;
+    trans: Array<string>;
     
     
 //    @Input() block: number;
@@ -62,7 +63,8 @@ export class AppComponent implements OnInit {
         
         
         this.getBlockNumber().subscribe(currentBlock => currentBlock = currentBlock); //web3.eth.defaultBlock;
-//        this.getTrans().subscribe(currentTrans => this.currentTrans = currentTrans);
+        this.getTrans().subscribe(trans => this.trans = trans);
+//        this.getTrans();
 /*
         setInterval(() => {
             this.getBlockNumber().subscribe(currentBlock => this.currentBlock = currentBlock); //web3.eth.defaultBlock;
@@ -79,9 +81,23 @@ export class AppComponent implements OnInit {
 */    }
     
     getTrans(): Observable<Array<string>> {
-        return of(this.getTransactionsByAccount(this.coinbase,null,null));
+        
+        web3.eth.filter('latest').watch(x => {
+            console.log("start fetching trans");
+            //this.currentTrans = this.getTransactionsByAccount(this.coinbase,null,null);
+            this.getTsx().subscribe(currentTrans => this.currentTrans = currentTrans);
+            console.log("transactions fetch done");
+        });       
+        return of(this.currentTrans);
+        
+        
+//        return of(this.getTransactionsByAccount(this.coinbase,null,null));
     }
-    
+  
+    getTsx(): Observable<Array<string>> {
+        var tsx = this.getTransactionsByAccount(this.coinbase,null,null);
+        return of(tsx);
+    }
     
 //    get blockData(): number {
 //        console.debug('getting row data');
@@ -169,7 +185,7 @@ export class AppComponent implements OnInit {
           console.log("Using endBlockNumber: " + endBlockNumber);
         }
         if (startBlockNumber == null) {
-          startBlockNumber = endBlockNumber - 1000;
+          startBlockNumber = endBlockNumber - 100;
           console.log("Using startBlockNumber: " + startBlockNumber);
         }
         console.log("Searching for transactions to/from account \"" + myaccount + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
@@ -185,7 +201,7 @@ export class AppComponent implements OnInit {
                   
                   trans.push("tx hash="+e.hash+"; txIdx="+e.transactionIndex+"; value="+e.value+"\n");
                   
-                console.log("  tx hash          : " + e.hash + "\n"
+/*                console.log("  tx hash          : " + e.hash + "\n"
                   + "   nonce           : " + e.nonce + "\n"
                   + "   blockHash       : " + e.blockHash + "\n"
                   + "   blockNumber     : " + e.blockNumber + "\n"
@@ -197,7 +213,7 @@ export class AppComponent implements OnInit {
                   + "   gasPrice        : " + e.gasPrice + "\n"
                   + "   gas             : " + e.gas + "\n"
                   + "   input           : " + e.input);
-              }
+*/              }
             })
           }
         }
