@@ -13,7 +13,7 @@ import { BlockService }  from '../block.service';
 
 export class BlockDetailComponent implements OnInit {
     
-    @Input() block: Block;
+    block: Block;
 
     constructor(private route: ActivatedRoute,
             private blockService: BlockService,
@@ -26,6 +26,7 @@ export class BlockDetailComponent implements OnInit {
     
     getBlock(): void {
         const id = +this.route.snapshot.paramMap.get('id');
+        console.log('getBlock id = ' + id);
         this.blockService.getBlock(id).subscribe(blk => this.block = blk);
     }
 

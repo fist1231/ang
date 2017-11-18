@@ -7,7 +7,7 @@
 		<td>
 			<h4>Blocks</h4>
 			<ul class="blocks">
-			  <li *ngFor="let block of blocks;let index = index;" [class.selected]="block === selectedBlock" (mouseenter)="onSelect(block)">
+			  <li *ngFor="let block of blocks;let index = index;" [class.selected]="block === selectedBlock" (mouseenter)="onSelect(block)" >
 			  
   			  	<a routerLink="/detail/{{block.id}}">
 			    	<span class="badge">{{block.id}}</span> {{block.miner}} 
@@ -17,7 +17,9 @@
 			</ul>
 		</td>	
 		<td>
-			<app-block-detail [block]="selectedBlock"></app-block-detail>
+			<div *ngIf="selectedBlock">
+				<app-block-preview [block]="selectedBlock"></app-block-preview>
+			</div>
 		</td>
 	</tr>
 </table>

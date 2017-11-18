@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
 import { AppComponent } from './app.component';
 import { BlocksComponent } from './blocks/blocks.component';
 import { BlockDetailComponent } from './block-detail/block-detail.component';
+import { BlockPreviewComponent } from './block-detail/block-preview.component';
 
 import {BlockService} from './block.service';
 import { MessagesComponent } from './messages/messages.component';
@@ -18,6 +19,7 @@ import { DashboardComponent } from './dashboard/dashboard.component'
     AppComponent,
     BlocksComponent,
     BlockDetailComponent,
+    BlockPreviewComponent,
     MessagesComponent,
     DashboardComponent
   ],

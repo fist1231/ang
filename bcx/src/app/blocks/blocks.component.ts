@@ -1,7 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Block } from '../block';
 import { BlockService } from '../block.service';
-import {MessageService} from '../message.service'
 import Web3 from 'web3';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
@@ -14,28 +13,58 @@ const web3 = new Web3( new Web3.providers.HttpProvider( "http://localhost:9595" 
   styleUrls: ['./blocks.component.css']
 })
 
-export class BlocksComponent implements OnInit {
+export class BlocksComponent implements OnInit, OnDestroy {
     
-    blocks: Block[];
+    blocks: Block[] = [];
+    subWatch: any;
+    subBlocks: any;
+    subBlockService: any;
     
     selectedBlock: Block;
 
-    constructor(private blockService: BlockService, private messageService: MessageService) { }
+    filtr = web3.eth.filter('latest');
+
+    constructor(private blockService: BlockService) { }
 
     ngOnInit() {
+        console.log('OnInit');
         this.getBlocks();
-        this.watchBlocks().subscribe(blocks => this.blocks = blocks);
+        this.watchBlocks();
+//        this.subWatch = this.watchBlocks().subscribe(blocks => this.blocks = blocks);
+    }
+
+    ngOnDestroy() {
+        console.log('onDestroy');
+//        this.subWatch.unsubscribe();
+//        this.subBlocks.unsubscribe();
+//        this.subBlockService.unsubscribe();
+        this.filtr.stopWatching();
     }
     
     getBlocks() {
-        this.blockService.getBlocks().subscribe(blocks => this.blocks = blocks);
+        this.subBlocks = this.blockService.getBlocks().subscribe(blocks => this.blocks = blocks);
     }  
 
-    watchBlocks(): Observable<Block[]> {
-        web3.eth.filter('latest').watch(x => {
-            this.blockService.getBlocks().subscribe(blocks => this.blocks = blocks);
-        });       
-        return of(this.blocks);
+//    watchBlocks(): Observable<Block[]> {
+    watchBlocks() {
+        this.filtr.watch(x => {
+            this.subBlockService = this.blockService.getBlocks().subscribe(blocks => {
+                this.blocks = blocks;
+                },
+                err => {
+                    console.log(err);
+                    //closeLoadingBar();
+               },
+               () => {
+                   console.log("Completed watchBlock");
+//                   this.subBlockService.unsubscribe();
+                   
+                    //do whatever you want
+                    //closeLoadingBar()
+               }
+            );
+        });
+//        return of(this.blocks);
     }  
 
     onSelect(block: Block): void {

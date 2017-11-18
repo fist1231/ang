@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Block } from '../block';
 import { BlockService } from '../block.service';
 import Web3 from 'web3';
@@ -13,26 +13,58 @@ const web3 = new Web3( new Web3.providers.HttpProvider( "http://localhost:9595" 
   styleUrls: ['./dashboard.component.css']
 })
 
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
     
     blocks: Block[] = [];
+    subWatch: any;
+    subBlocks: any;
+    subBlockService: any;
+
+    filtr = web3.eth.filter('latest');
 
     constructor(private blockService: BlockService) { }
 
     ngOnInit() {
+        console.log('OnInit');
+        console.log('Before: ' + this.blocks.length );
         this.getBlocks();
-        this.watchBlocks().subscribe(blocks => this.blocks = blocks);
+        console.log('After1: ' + this.blocks.length );
+        this.watchBlocks();
+        console.log('After2: ' + this.blocks.length );
+//        this.subWatch = this.watchBlocks().subscribe(blocks => this.blocks = blocks);
     }
     
-    getBlocks(): void {
-        this.blockService.getBlocks().subscribe(blocks => this.blocks = blocks.slice(1, 5));
+    ngOnDestroy() {
+        console.log('onDestroy');
+//        this.subWatch.unsubscribe();
+//        this.subBlocks.unsubscribe();
+//        this.subBlockService.unsubscribe();
+        this.filtr.stopWatching();
+        
+    }
+    
+    getBlocks() {
+        this.subBlocks = this.blockService.getBlocks().subscribe(blocks => this.blocks = blocks.slice(1, 5));
     }    
 
-    watchBlocks(): Observable<Block[]> {
-        web3.eth.filter('latest').watch(x => {
-            this.blockService.getBlocks().subscribe(blocks => this.blocks = blocks.slice(1, 5));
-        });       
-        return of(this.blocks);
+    watchBlocks() {
+        this.filtr.watch(x => {
+            this.subBlockService = this.blockService.getBlocksStream().subscribe(blocks => { 
+                this.blocks = blocks.slice(1, 5);
+            },
+            err => {
+                console.log(err);
+                //closeLoadingBar();
+           },
+           () => {
+               console.log("Completed watchBlock");
+//               this.subBlockService.unsubscribe();
+               
+                //do whatever you want
+                //closeLoadingBar()
+           }
+        );
+    });
     }  
 
 
