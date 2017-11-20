@@ -20,6 +20,7 @@ const web3 = new Web3( new Web3.providers.HttpProvider( "http://localhost:9595" 
 export class TxListComponent implements OnInit {
 
     transactions: Tx[] = [];
+    tranz: Observable<Tx[]>;
 
     constructor(private route: ActivatedRoute,
             private blockService: BlockService,
@@ -28,12 +29,18 @@ export class TxListComponent implements OnInit {
     
     ngOnInit() {
 //        this.getTxs();
-        this.firstThou();
+//        this.firstThou();
     }
     
     firstThou() {
 //        this.blockService.getTransactionsByBlk(1).subscribe(txs => this.transactions = txs);
-        this.blockService.txAnnounced$.subscribe(txs => this.transactions = txs);
+        this.blockService.txAnnounced$.subscribe(txs => {
+                this.transactions = txs;
+                console.log("Un- Sourced +++++++++++++++++++++++++++++++++++> " + txs);
+                console.log("Un- Sourced +++++++++++++++++++++++++++++++++++> " + this.transactions);
+
+            }
+        );
         
         
 //      this.getTran().subscribe(txs => this.transactions = txs);
@@ -75,10 +82,19 @@ export class TxListComponent implements OnInit {
     }
 
     getMoreTxs(): void {
+        
         const account = +this.route.snapshot.paramMap.get('account');
         console.log('getTransactions for account = ' + account);
+        
+        this.tranz = new Observable(observer => {
+            this.blockService.getTransactionsByBlk(1, account).subscribe(traaan => this.transactions = traaan);
+        });
+        
+        
+        this.tranz.subscribe(traaan => this.transactions = traaan);
+        
 //        this.blockService.getTransactionsByBlk(1);
-      this.blockService.getTransactionsByBlk(1, account).subscribe(txs => this.transactions = txs);
+//        this.blockService.getTransactionsByBlk(1, account).subscribe(txs => this.transactions = txs);
                 
 //        this.blockService.getTransactions(account).subscribe(txs => this.transactions = txs);
     }
