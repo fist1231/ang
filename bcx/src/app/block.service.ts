@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { MessageService } from './message.service';
 import Web3 from 'web3';
+import { Tx }  from './tx';
 
 const web3 = new Web3( new Web3.providers.HttpProvider( "http://localhost:9595" ) );
 
@@ -14,6 +15,7 @@ export class BlockService implements OnDestroy {
     coinbase = web3.eth.coinbase;
     accounts = web3.eth.accounts;
     BLOCKS: Block[] = [];
+    transactions: Tx[] = [];
 
     subBlocks: any;
     
@@ -134,4 +136,118 @@ export class BlockService implements OnDestroy {
         return of(localBlocks);
     }
     
+    getTransactions(account): Observable<Tx[]> {
+//        var tsx = this.getTransactionsByAccount(account, 1, null);
+//        this.getTransactionsByAccount(account, 1, null).subscribe(txs => this.transactions = txs);
+        return of(this.transactions);
+    }
+
+    getTransactionsByBlk(id): Observable<Tx[]> {
+        for (var i = 1; i <= 2000; i++) {
+            if (i % 1000 == 0) {
+              console.log("Searching block " + i);
+            }
+//            this.transactions = this.getTransactionsByBlock(i);
+            this.getTransactionsByBlock(i).subscribe(txs => this.transactions = txs);
+        }
+
+//      var tsx = this.getTransactionsByBlock(id);
+      return of(this.transactions);
+  }
+
+    getTransactionsByAccount2(myaccount: string, startBlockNumber, endBlockNumber) {
+        var localTrans = [];
+        if (endBlockNumber == null) {
+          endBlockNumber = web3.eth.blockNumber;
+          console.log("Using endBlockNumber: " + endBlockNumber);
+        }
+        if (startBlockNumber == null) {
+          startBlockNumber = endBlockNumber - 100;
+          console.log("Using startBlockNumber: " + startBlockNumber);
+        }
+        console.log("Searching for transactions to/from account \"" + myaccount + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
+
+        for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+          if (i % 1000 == 0) {
+            console.log("Searching block " + i);
+          }
+          var block = web3.eth.getBlock(i, true);
+          if (block != null && block.transactions != null) {
+            block.transactions.forEach( function(e) {
+              if (myaccount == "*" || myaccount == e.from || myaccount == e.to) {
+                  
+//                  localTrans.push("tx hash="+e.hash+"; txIdx="+e.transactionIndex+"; value="+e.value+"\n");
+                  localTrans.push({ 
+                      hash: +e.hash,
+                      nonce: +e.nonce,
+                      blockHash: +e.blockHash,
+                      blockNumber: +e.blockNumber,
+                      transactionIndex: +e.transactionIndex,
+                      from: +e.from,
+                      to: +e.to,
+                      value: +e.value,
+                      gasPrice: +e.gasPrice,
+                      gas: +e.gas,
+                      input: +e.input
+                  });
+                  
+                  
+                console.log("  tx hash          : " + e.hash + "\n"
+                  + "   nonce           : " + e.nonce + "\n"
+                  + "   blockHash       : " + e.blockHash + "\n"
+                  + "   blockNumber     : " + e.blockNumber + "\n"
+                  + "   transactionIndex: " + e.transactionIndex + "\n"
+                  + "   from            : " + e.from + "\n" 
+                  + "   to              : " + e.to + "\n"
+                  + "   value           : " + e.value + "\n"
+                  + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toUTCString() + "\n"
+                  + "   gasPrice        : " + e.gasPrice + "\n"
+                  + "   gas             : " + e.gas + "\n"
+                  + "   input           : " + e.input);
+              }
+            })
+          }
+        }
+        return localTrans;
+      }    
+
+    getTransactionsByBlock(blockNumber): Observable<Tx[]> {
+          var localTrans = [];
+          var block = web3.eth.getBlock(blockNumber, true);
+          if (block != null && block.transactions != null) {
+            block.transactions.forEach( function(e) {
+                  
+    //                  localTrans.push("tx hash="+e.hash+"; txIdx="+e.transactionIndex+"; value="+e.value+"\n");
+                  localTrans.push({ 
+                      hash: +e.hash,
+                      nonce: +e.nonce,
+                      blockHash: +e.blockHash,
+                      blockNumber: +e.blockNumber,
+                      transactionIndex: +e.transactionIndex,
+                      from: +e.from,
+                      to: +e.to,
+                      value: +e.value,
+                      gasPrice: +e.gasPrice,
+                      gas: +e.gas,
+                      input: +e.input
+                  });
+                  
+                  
+                console.log("  tx hash          : " + e.hash + "\n"
+                  + "   nonce           : " + e.nonce + "\n"
+                  + "   blockHash       : " + e.blockHash + "\n"
+                  + "   blockNumber     : " + e.blockNumber + "\n"
+                  + "   transactionIndex: " + e.transactionIndex + "\n"
+                  + "   from            : " + e.from + "\n" 
+                  + "   to              : " + e.to + "\n"
+                  + "   value           : " + e.value + "\n"
+                  + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toUTCString() + "\n"
+                  + "   gasPrice        : " + e.gasPrice + "\n"
+                  + "   gas             : " + e.gas + "\n"
+                  + "   input           : " + e.input);
+              });
+          }
+          return of(localTrans);
+      }    
+
 }

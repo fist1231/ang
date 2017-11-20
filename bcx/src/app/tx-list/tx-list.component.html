@@ -1,0 +1,18 @@
+<table class="txs">
+  <tr *ngFor="let tx of transactions;let index = index;">
+    	<td>{{tx.hash}}</td>
+    	<td>{{tx.nonce}}</td> 
+    	<td>{{tx.blockHash}}</td> 
+    	<td>{{tx.blockNumber}}</td> 
+    	<td>{{tx.transactionIndex}}</td> 
+    	<td>{{tx.from}}</td> 
+    	<td>{{tx.to}}</td> 
+    	<td>{{tx.value}}</td> 
+    	<td>{{tx.gasPrice}}</td> 
+    	<td>{{tx.gas}}</td> 
+    	<td>{{tx.input}}</td> 
+  </tr>
+</table>
+<div>
+	<button class="more" (click)="firstThou()">Get more</button>
+</div>

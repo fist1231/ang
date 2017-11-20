@@ -12,7 +12,8 @@ import {BlockService} from './block.service';
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 import { AppRoutingModule } from './/app-routing.module';
-import { DashboardComponent } from './dashboard/dashboard.component'
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { TxListComponent } from './tx-list/tx-list.component'
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { DashboardComponent } from './dashboard/dashboard.component'
     BlockDetailComponent,
     BlockPreviewComponent,
     MessagesComponent,
-    DashboardComponent
+    DashboardComponent,
+    TxListComponent
   ],
   imports: [
     BrowserModule,

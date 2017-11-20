@@ -20,11 +20,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     subBlocks: any;
     subBlockService: any;
 
+    coinbase = web3.eth.coinbase;
+    balance: number;
+    balanceEther: string;
+    accounts: string[];
+    latestBlock: number;
+    transactionsNum: number;
+
+
     filtr = web3.eth.filter('latest');
 
     constructor(private blockService: BlockService) { }
 
     ngOnInit() {
+        this.getStats();
         console.log('OnInit');
         console.log('Before: ' + this.blocks.length );
         this.getBlocks();
@@ -51,6 +60,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.filtr.watch(x => {
             this.subBlockService = this.blockService.getBlocksStream().subscribe(blocks => { 
                 this.blocks = blocks.slice(1, 5);
+                this.getStats();
             },
             err => {
                 console.log(err);
@@ -67,5 +77,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
     }  
 
-
+    getStats() {
+        this.balance = web3.eth.getBalance( this.coinbase );
+        this.balanceEther = web3.fromWei(web3.eth.getBalance(web3.eth.coinbase), "ether").toString(10);
+        this.accounts = web3.eth.accounts;
+        this.latestBlock = web3.eth.getBlock('latest').number; //web3.eth.defaultBlock;
+        this.transactionsNum = web3.eth.getTransactionCount( this.coinbase );
+    }
 }

@@ -1,4 +1,30 @@
 <div class="dash">
+<h4>Info:</h4>
+	Accounts: [{{accounts[0]}}]
+	<br/>
+	<ul class="blocks">
+	  <li *ngFor="let act of accounts;let index = index;">
+		<a routerLink="/transactions/{{act}}">
+	    	<span class="badge">{{act}}</span>
+	    </a>
+	  </li>
+	</ul>
+	
+	
+	
+	Balance: {{balanceEther | currency:'&Xi;':'code':'1.2-2'}}
+	<br/>
+	Balance Wei: {{balance}}
+	<br/>
+	Last block #: <span *ngIf="latestBlock then thenBlock; else elseBlock"></span>
+	<ng-template #thenBlock>{{latestBlock}}</ng-template>
+	<ng-template #elseBlock>wait ...</ng-template>
+	<br/>
+	Trans #: {{transactionsNum}}
+
+</div>
+
+<div class="dash">
 	<h4>Last Blocks</h4>
 	<div class="grid grid-pad">
 	  <a *ngFor="let block of blocks;let index = index;" class="col-1-4" routerLink="/detail/{{block.id}}">

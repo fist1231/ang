@@ -39,7 +39,7 @@
 		</div>
 		<div class="divRow">
 			<div class="divCell1"><span>Timestamp:</span></div>
-			<div class="divCell">{{block.timestamp}}</div>
+			<div class="divCell">{{block.timestamp * 1000 | date : 'MM/dd/yyyy hh:mm:ss a' : timezone}}</div>
 		</div>
 		<div class="divRow">
 			<div class="divCell1"><span>Total Difficulty:</span></div>
@@ -49,6 +49,12 @@
 			<div class="divCell1"><span>Transactions:</span></div>
 			<div class="divCell">{{block.transactions}}</div>
 		</div>
+		<div class="divRow">
+			<div class="divCell1"><span>Tx List:</span></div>
+			<div class="divCell"><a routerLink="/transactions">Transactions</a></div>
+		</div>
+				
+		
 	</div>
 
 </div>
