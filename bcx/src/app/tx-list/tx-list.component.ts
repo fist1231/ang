@@ -32,7 +32,8 @@ export class TxListComponent implements OnInit {
     }
     
     firstThou() {
-        this.blockService.getTransactionsByBlk(1).subscribe(txs => this.transactions = txs);
+//        this.blockService.getTransactionsByBlk(1).subscribe(txs => this.transactions = txs);
+        this.blockService.txAnnounced$.subscribe(txs => this.transactions = txs);
         
         
 //      this.getTran().subscribe(txs => this.transactions = txs);
@@ -52,9 +53,7 @@ export class TxListComponent implements OnInit {
             if (i % 1000 == 0) {
               console.log("Searching block " + i);
             }
-              this.blockService.getTransactionsByBlk(i).subscribe(txs => {
-                  this.transactions = this.transactions.concat(txs);
-              });
+              this.blockService.getTransactionsByBlk(i, account);
         }
         
 //        this.getTxs();
@@ -69,9 +68,7 @@ export class TxListComponent implements OnInit {
             if (i % 1000 == 0) {
               console.log("Searching block " + i);
             }
-              this.blockService.getTransactionsByBlk(i).subscribe(txs => {
-                  this.transactions = this.transactions.concat(txs);
-              });
+              this.blockService.getTransactionsByBlk(i, account);
         }
                 
 //        this.blockService.getTransactions(account).subscribe(txs => this.transactions = txs);
@@ -80,14 +77,8 @@ export class TxListComponent implements OnInit {
     getMoreTxs(): void {
         const account = +this.route.snapshot.paramMap.get('account');
         console.log('getTransactions for account = ' + account);
-        for (var i = 2001; i <= web3.eth.blockNumber; i++) {
-            if (i % 1000 == 0) {
-              console.log("Searching block " + i);
-            }
-              this.blockService.getTransactionsByBlk(i).subscribe(txs => {
-                  this.transactions = this.transactions.concat(txs);
-              });
-        }
+//        this.blockService.getTransactionsByBlk(1);
+      this.blockService.getTransactionsByBlk(1, account).subscribe(txs => this.transactions = txs);
                 
 //        this.blockService.getTransactions(account).subscribe(txs => this.transactions = txs);
     }

@@ -1,13 +1,13 @@
 export class Tx {
-    hash: string;
+    hash: number;
     nonce: number;
-    blockHash: string;
+    blockHash: number;
     blockNumber: number;
     transactionIndex: number;
-    from: string;
-    to: string;
+    from: number;
+    to: number;
     value: number;
     gasPrice: number;
     gas: number;
-    input: string
+    input: number
 }
