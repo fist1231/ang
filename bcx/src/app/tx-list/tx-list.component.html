@@ -1,18 +1,23 @@
-<table class="txs">
-  <tr *ngFor="let tx of transactions; let index = index;">
-    	<td>{{tx.hash}}</td>
-    	<td>{{tx.nonce}}</td> 
-    	<td>{{tx.blockHash}}</td> 
-    	<td>{{tx.blockNumber}}</td> 
-    	<td>{{tx.transactionIndex}}</td> 
-    	<td>{{tx.from}}</td> 
-    	<td>{{tx.to}}</td> 
-    	<td>{{tx.value}}</td> 
-    	<td>{{tx.gasPrice}}</td> 
-    	<td>{{tx.gas}}</td> 
-    	<td>{{tx.input}}</td> 
-  </tr>
-</table>
+<div *ngIf="transactions; then thenTxs; else elseTxs"></div>
+<ng-template #thenTxs>
+	<table class="txs">
+		 <tr *ngFor="let tx of transactions; let index = index;">
+		   	<td>{{tx.hash}}</td>
+		   	<td>{{tx.nonce}}</td> 
+		   	<td>{{tx.blockHash}}</td> 
+		   	<td>{{tx.blockNumber}}</td> 
+		   	<td>{{tx.transactionIndex}}</td> 
+		   	<td>{{tx.from}}</td> 
+		   	<td>{{tx.to}}</td> 
+		   	<td>{{tx.value}}</td> 
+		   	<td>{{tx.gasPrice}}</td> 
+		   	<td>{{tx.gas}}</td> 
+		   	<td>{{tx.input}}</td> 
+		 </tr>
+	</table>
+</ng-template>
+<ng-template #elseTxs>Loading ...</ng-template>
+
 <div>
 	<button class="more" (click)="getMoreTxs()">Get more</button>
 </div>

@@ -4,11 +4,29 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { from } from 'rxjs/observable/from';
 import { defer } from 'rxjs/observable/defer';
+import { interval } from 'rxjs/observable/interval';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { MessageService } from './message.service';
 import Web3 from 'web3';
 import { Tx }  from './tx';
 import { Subject }    from 'rxjs/Subject';
+import { ReplaySubject }    from 'rxjs/ReplaySubject';
+
+import { range } from 'rxjs/observable/range';
+
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/do';
+//import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/delay';
+import 'rxjs/add/operator/take';
+
+import {
+    debounceTime, distinctUntilChanged, switchMap, flatMap
+  } from 'rxjs/operators';
+
+//import {map} from 'rxjs/add/operator/map';
+//import { just } from 'rxjs/observable/just';
 
 
 const web3 = new Web3( new Web3.providers.HttpProvider( "http://localhost:9595" ) );
@@ -20,10 +38,10 @@ export class BlockService implements OnDestroy {
     coinbase = web3.eth.coinbase;
     accounts = web3.eth.accounts;
     BLOCKS: Block[] = [];
-    txs: Array<Tx>;
+    txs: Tx[] = [];
     
     // Observable string sources
-    txSource = new Subject<Tx[]>();
+    txSource = new Subject<Tx>();
     
     public that = this;
     
@@ -303,7 +321,7 @@ export class BlockService implements OnDestroy {
     }
 
 
-    fetchTransactionsRange(id, account, from, to): Observable<Tx[]> {
+    fetchTransactionsRange(id, account, from, to): Observable<any> {
         var localTrans = [];
         this.txs = [];
         
@@ -312,18 +330,18 @@ export class BlockService implements OnDestroy {
         numbers.map(x => {
 //            console.log("Searching block " + x);
 //            this.getTransactionsByBlock(x,account);
-            this.getTransactionsByBlock(x,account).subscribe(txs => this.txs = txs);
+//            this.getTransactionsByBlock(x,account).subscribe(txs => this.txs = txs);
         });
         return this.txSource.asObservable();
     }
     
     
     getTransactionsByBlock(blockNumber, myaccount): Observable<Tx[]> {
-        var localTrans = [];
-        var parsedObj;
-        var localTx;
         
         var block = web3.eth.getBlock(blockNumber, true, (error, block) => {
+            var localTrans: Tx[] = [];
+            var parsedObj;
+            var localTx;
             if(!error) {
                 if(block.transactions.length > 0) {
                     console.log("tx.length for block#: " + blockNumber + " =============> " + block.transactions.length);
@@ -353,7 +371,7 @@ export class BlockService implements OnDestroy {
                                     input: parsedObj.input
                             };
                             
-//                          this.transactions.push(localTx);
+//                           this.transactions.push(localTx);
                             localTrans.push(localTx);
                             this.txs.push(localTx);
                             //this.txSource.next(localTx);
@@ -378,15 +396,321 @@ export class BlockService implements OnDestroy {
                     if(localTrans.length > 0) {
 //                      this.txSource.next(localTrans);
 //                      this.txs.push(localTrans);
-                        this.txSource.next(this.txs);
+                        localTrans.map(tx => this.txSource.next(tx));
                         console.log("Sourced %%%%%%%%%%%%%%%%%> " + localTrans);
                     }
                 }
             }
         });
         
-//      return from(this.txs);
-        return this.txSource.asObservable();
+      return of(this.txs);
+//        return this.txSource.asObservable();
     }    
+    
+    getTransactionsByBlockNumber(blockNumber, myaccount) {
+//        console.log("In the block #" + blockNumber);
+        this.getTransactionsByBlock(blockNumber, myaccount)
+    }
+    
+    
+    clearRange() {
+        this.txSource = new Subject<Tx>();
+    }
+    
+    myTest(): Observable<any> {
+        var cnt = 11000;
+        var delayedStream = interval(3)
+        .take(web3.eth.blockNumber-cnt) // end the observable after it pulses N times
+        .map(function (i) { return cnt++; });
+//        return delayedStream;
+        
+        
+        var obs$ = Observable.create( observer => {
+            var rng$ = range(1, web3.eth.blockNumber);
+            var range$ = delayedStream.subscribe(
+                    
+                    x => {
+                        var readyState = 0;
+                    setTimeout( () => readyState = 1, 5000);
+                    
+                       console.log("range to observer next #: " + x);
+                
+//                        setTimeout(() => {
+        //                    console.log("range to observer next #: " + x);
+                            web3.eth.getBlock(x, true, (error, block) => {
+                                  if(!error) {
+                                          if(block.transactions.length > 0) {
+                                              console.log("tx.length for block#: " + x + " =============> " + block.transactions.length);
+                                              this.txSource.next(this.buildFakeTx(x, block.transactions.length));
+                                              observer.next(x);
+                                          }//t21
+                                  } else {
+                                      console.log("web3.eth.getBlock ERROR!!! " + error);
+                                  }
+                            });
+//
+//                    
+//                        }, 1000);
+                
+                    },
+                    error => {
+                        console.log("range$ ERROR!!! " + error);
+                    }
+            );
+            
+        });
+        //ret
+        
+        return obs$;
+        
+
+
+        
+        
+//        var rng$ = range(1, web3.eth.blockNumber);
+//        const source$ = interval(5000);
+//        
+////        var range$ = source$.switchMap(() => rng$.map(x => {
+//        var range$ = rng$.forEach(x => {
+//            console.log("range #: " + x);
+//            if (x % 500 == 0) {
+//                this.txSource.next(this.buildFakeTx(x, 42));
+//              }
+//            web3.eth.getBlock(x, true, (error, block) => {
+//                if(!error) {
+//                    if(block.transactions.length > 0) {
+//                        console.log("tx.length for block#: " + x + " =============> " + block.transactions.length);
+//                        this.txSource.next(this.buildFakeTx(x, block.transactions.length));
+//                    }
+//                }
+//            });
+//            
+//            
+//        });
+//        return this.txSource;
+
+/*
+        return Observable.create( observer => {
+          var rng$ = range(1, web3.eth.blockNumber);
+          
+          rng$.map(x => {
+              var z= x*101;
+          }).do(x => console.log("In the block #" + x));
+          
+          for (var i = 1; i <= web3.eth.blockNumber; i++) {
+            setTimeout(() => {
+//              console.log("In for Loop #" + i);
+             }, 2000);
+          }
+          
+          observer.next(this.buildFakeTx(777, 24));
+          this.txSource.next(this.buildFakeTx(888, 42));
+          observer.complete();
+      }
+          );
+        
+*///        
+        
+
+/*
+        return Observable.create( observer => {
+
+            var subject = new Subject<any>();
+//            const source$ = interval(5000);
+          
+            var ob1$ = range(1, web3.eth.blockNumber).map(x => {
+//                 subject.next(x);
+                 return x;
+             });
+
+             ob1$.subscribe(x => {
+                    console.log("subscribe + " + x);
+//                    setTimeout(() => {
+                        web3.eth.getBlock(x, true, (error, block) => {
+                            if(!error) {
+                                if(block.transactions.length > 0) {
+                                    console.log("tx.length for block#: " + x + " =============> " + block.transactions.length);
+                                    this.txSource.next(this.buildFakeTx(x, block.transactions.length));
+                                    subject.next(block.transactions.length);
+                                }
+                            }
+                        });
+//                    }, 2000);
+             
+              });
+        });
+        
+*/        
+    }
+    
+    
+    fetchTxs(id, account): Observable<any> {
+        return this.myTest();
+     }
+
+   buildFakeTx(hash: number, num: number): Tx {
+       
+       return {hash: hash,
+       nonce: num,
+       blockHash: 0,
+       blockNumber: 0,
+       transactionIndex: 0,
+       from: 0,
+       to: 0,
+       value: 0,
+       gasPrice: 0,
+       gas: 0,
+       input: 0}
+       
+   }
+    
+    
+    vault() {
+        var subject = new Subject<any>();
+        var ob2$ = Observable.create( observer => {
+
+              const source$ = interval(5000);
+            
+               var ob1$ = source$.switchMap(() => range(1, web3.eth.blockNumber).map(x => {
+//                   subject.next(x);
+                   return x;
+               }));
+
+               ob1$.subscribe(x => {
+                   console.log("subscribe + " + x);
+                  setTimeout(() => {
+                      web3.eth.getBlock(x, true, (error, block) => {
+                          if(!error) {
+                              if(block.transactions.length > 0) {
+                                  console.log("tx.length for block#: " + x + " =============> " + block.transactions.length);
+                              }
+                          }
+                          subject.next(block.transactions.length);
+                      });
+                  }, 2000);
+               
+            });
+               
+               
+//               ob1$.subscribe();             
+//               }).subscribe(x => {
+//                   setTimeout(() => {
+//                       web3.eth.getBlock(x, true, (error, block) => {
+//                           
+//                       });
+//                   }, 2000);
+//                       
+//               });
+               observer.complete();
+        });
+        ob2$.subscribe(); 
+//        return subject;   
+             
+             return subject.pipe(
+                             debounceTime(3000),
+                             distinctUntilChanged(),
+                             switchMap((num: number, act: number) => this.getTransactionsByBlock(num, act))
+                    );
+       
+       
+//                     }).subscribe(x => {
+//                         setTimeout(() => {
+//                             web3.eth.getBlock(x, true, (error, block) => {
+//                                 
+//                             });
+//                         }, 2000);
+//                             
+//                     });
+       
+       
+//       var subscription = $subj.subscribe(
+//               function (x) {
+//                   console.log('Next: ' + x);
+//               },
+//               function (err) {
+//                   console.log('Error: ' + err);
+//               },
+//               function () {
+//                   console.log('Completed');
+//               });
+       
+//       $subj.map(x => {
+//         Observable.create( observer => {
+//         
+//                 observer.next(x);
+//                 observer.complete();
+//             });
+//       //      var subject = new Subject<any>();
+//       //      subject.next(x);
+//         });
+//       return subscription;
+       
+//       .map(x => {
+//           Observable.create( observer => {
+//               
+//               observer.next(x);
+//               observer.complete();
+//           }).subscribe(x => console.log("x ======> " + x));
+////           var subject = new Subject<any>();
+////           subject.next(x);
+//       });
+       
+//       return Observable.create( observer =>
+//               {
+//                   for (var i = 12000; i <= web3.eth.blockNumber; i++) {
+//                       observer.next(i);
+//                   }
+//                   observer.complete();
+//               //or can return an Action like 
+//               //return () => Console.WriteLine("Observer has unsubscribed"); 
+//               });
+       
+       
+//       var subject = new ReplaySubject<any>();
+//           for (var i = 12000; i <= web3.eth.blockNumber; i++) {
+//               subject.next(i);
+//           }
+////       subject.next("a");
+////       subject.next("b");
+////       subject.complete();
+////       setTimeout(() => {
+////       }, 5000);
+//          
+//       return subject;        
+       
+//       return Observable.create(function (observer) {
+//           
+//           var nums = Array.apply(null, [web3.eth.blockNumber]).fill().map((x,i)=>i+1);
+//           
+//           from(Array.apply(null, [web3.eth.blockNumber]).fill().map((x,i)=>i+1)).map(x => {
+//               observer.next(x);
+//           });
+           
+/*            for (var i = 12000; i <= web3.eth.blockNumber; i++) {
+               if (i % 500 == 0) {
+                 observer.next(i);
+               }
+               if (i === web3.eth.blockNumber) {
+                 setTimeout(() => {
+                   observer.next(i);
+                   observer.complete();
+                 }, 5000);
+               }
+             }
+*/            
+//           Array.apply(null, [web3.eth.blockNumber]).fill().map((x,i)=>i+1)
+//           .forEach(function(response) { observer.onNext(response); })
+//           .fail(function(jqXHR, status, error) { observer.onError(error); })
+//           .always(function() { observer.onCompleted(); });
+//         });
+       
+/*        
+       return from(
+               Array.apply(null, [web3.eth.blockNumber]).fill().map((x,i)=>i+1)
+       );
+       
+*/
+        
+    }
     
 }

@@ -20,7 +20,11 @@ const web3 = new Web3( new Web3.providers.HttpProvider( "http://localhost:9595" 
 export class TxListComponent implements OnInit {
 
     transactions: Tx[] = [];
+    transactions$: Observable<Tx[]>;
+
     tranz: Observable<Tx[]>;
+    subWatch: any;
+
 
     constructor(private route: ActivatedRoute,
             private blockService: BlockService,
@@ -34,8 +38,8 @@ export class TxListComponent implements OnInit {
     
     firstThou() {
 //        this.blockService.getTransactionsByBlk(1).subscribe(txs => this.transactions = txs);
-        this.blockService.txAnnounced$.subscribe(txs => {
-                this.transactions = txs;
+        this.subWatch = this.blockService.txAnnounced$.subscribe(txs => {
+                this.transactions.push(txs);
                 console.log("Un- Sourced +++++++++++++++++++++++++++++++++++> " + txs);
                 console.log("Un- Sourced +++++++++++++++++++++++++++++++++++> " + this.transactions);
 
@@ -82,11 +86,14 @@ export class TxListComponent implements OnInit {
     }
 
     getMoreTxs(): void {
-        
         const account = +this.route.snapshot.paramMap.get('account');
         console.log('getTransactions for account = ' + account);
         
-        this.blockService.getTransactionsByBlk(1, account).subscribe(traaan => this.transactions = traaan);
+//        this.blockService.getTransactionsByBlk(1, account).subscribe(traaan => this.transactions = traaan);
+        
+        this.blockService.fetchTxs(1, account).subscribe(x => {
+            console.log("from component x = " + x);
+        });
         
         
 //        this.tranz.subscribe(traaan => this.transactions = traaan);
