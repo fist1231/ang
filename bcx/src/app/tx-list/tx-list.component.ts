@@ -29,7 +29,7 @@ export class TxListComponent implements OnInit {
     
     ngOnInit() {
 //        this.getTxs();
-//        this.firstThou();
+        this.firstThou();
     }
     
     firstThou() {
@@ -86,12 +86,10 @@ export class TxListComponent implements OnInit {
         const account = +this.route.snapshot.paramMap.get('account');
         console.log('getTransactions for account = ' + account);
         
-        this.tranz = new Observable(observer => {
-            this.blockService.getTransactionsByBlk(1, account).subscribe(traaan => this.transactions = traaan);
-        });
+        this.blockService.getTransactionsByBlk(1, account).subscribe(traaan => this.transactions = traaan);
         
         
-        this.tranz.subscribe(traaan => this.transactions = traaan);
+//        this.tranz.subscribe(traaan => this.transactions = traaan);
         
 //        this.blockService.getTransactionsByBlk(1);
 //        this.blockService.getTransactionsByBlk(1, account).subscribe(txs => this.transactions = txs);

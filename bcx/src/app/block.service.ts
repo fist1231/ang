@@ -3,6 +3,7 @@ import { Block } from './block';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { from } from 'rxjs/observable/from';
+import { defer } from 'rxjs/observable/defer';
 import { forkJoin } from 'rxjs/observable/forkJoin';
 import { MessageService } from './message.service';
 import Web3 from 'web3';
@@ -23,6 +24,8 @@ export class BlockService implements OnDestroy {
     
     // Observable string sources
     txSource = new Subject<Tx[]>();
+    
+    public that = this;
     
     txAnnounced$ = this.txSource.asObservable();
     
@@ -244,26 +247,59 @@ export class BlockService implements OnDestroy {
 
 */    
     getTransactionsByBlk(id, account): Observable<Tx[]> {
-        var localTrans = [];
-        this.txs = [];
+          return Observable.create(observer => {
+              setTimeout(() => {
+            
+                        Array.apply(null, [web3.eth.blockNumber]).fill().map((x,i)=>i+1).map(x => {
+                            if (x % 500 == 0) {
+                                console.log("Searching range of blocks " + x + " from " + (x-499) + " to " + x);
+                                this.fetchTransactionsRange(x,account, (x-499), x).subscribe(txs => this.txs = txs);
+//                                this.fetchTransactionsRange(x,account, (x-499), x);
+                            }
+            //                Array.apply(null, [10000]).fill().map((x,i)=>i+1); // [1,2,3,4,5]
+            
+                /*
+                            this.getTransactionsByBlock(x,account).subscribe(txs => {
+                                this.txs = txs;
+                                console.log('~~~~~~~~~~~~~~~~~~Received txs of size: ' + txs.length);
+                                
+                            });
+                */
+                        });
+       
+        //            Observable.return(rez);
+                      observer.next([Tx,Tx,Tx]);
+                      observer.complete()
+              }, 5000)
+              })
+            
+/*            
+            setTimeout(() => {
+                Array.apply(null, [web3.eth.blockNumber]).fill().map((x,i)=>i+1)
+                .map(x => {
+                    if (x % 500 == 0) {
+                        console.log("Searching range of blocks " + x + " from " + (x-499) + " to " + x);
+//                        this.fetchTransactionsRange(x,account, (x-499), x).subscribe(txs => this.txs = txs);
+                    }
+                    Array.apply(null, [10000]).fill().map((x,i)=>i+1); // [1,2,3,4,5]
+
         
-//        var fetchTransactionsRange = from(this.fetchTransactionsRange);
+                    this.getTransactionsByBlock(x,account).subscribe(txs => {
+                        this.txs = txs;
+                        console.log('~~~~~~~~~~~~~~~~~~Received txs of size: ' + txs.length);
+                        
+                    });
         
-        var numbers = Array.apply(null, [web3.eth.blockNumber]).fill().map((x,i)=>i+1); // [1,2,3,4,5]
-        numbers.map(x => {
-            if (x % 500 == 0) {
-                console.log("Searching range of blocks " + x + " from " + (x-499) + " to " + x);
-                this.fetchTransactionsRange(x,account, (x-499), x).subscribe(txs => this.txs = txs);
-            }
-/*
-            this.getTransactionsByBlock(x,account).subscribe(txs => {
-                this.txs = txs;
-                console.log('~~~~~~~~~~~~~~~~~~Received txs of size: ' + txs.length);
-                
-            });
-*/
+                });
+                observer.next([Tx,Tx,Tx]);
+                observer.complete()
+              }, 5000)
         });
-        return this.txSource.asObservable();
+        
+*/
+        
+        
+//        return this.txSource.asObservable();
     }
 
 
@@ -274,7 +310,8 @@ export class BlockService implements OnDestroy {
 //        console.log("fetchTransactionsRange from " + from + " to " + to);
         var numbers = Array.apply(null, [500]).fill().map((x,i)=>i+from); // [1,2,3,4,5]
         numbers.map(x => {
-            console.log("Searching block " + x);
+//            console.log("Searching block " + x);
+//            this.getTransactionsByBlock(x,account);
             this.getTransactionsByBlock(x,account).subscribe(txs => this.txs = txs);
         });
         return this.txSource.asObservable();
