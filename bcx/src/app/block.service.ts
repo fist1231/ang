@@ -20,6 +20,7 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/takeWhile';
 
 import {
     debounceTime, distinctUntilChanged, switchMap, flatMap
@@ -418,9 +419,9 @@ export class BlockService implements OnDestroy {
     }
     
     myTest(): Observable<any> {
-        var cnt = 11000;
+        var cnt = 1;
         var delayedStream = interval(3)
-        .take(web3.eth.blockNumber-cnt) // end the observable after it pulses N times
+        .take(web3.eth.blockNumber-cnt+1) // end the observable after it pulses N times
         .map(function (i) { return cnt++; });
 //        return delayedStream;
         
@@ -545,7 +546,8 @@ export class BlockService implements OnDestroy {
     
     
     fetchTxs(id, account): Observable<any> {
-        return this.myTest();
+//        return this.myTest();
+        return this.myTest2(account);//filter
      }
 
    buildFakeTx(hash: number, num: number): Tx {
@@ -710,6 +712,112 @@ export class BlockService implements OnDestroy {
        );
        
 */
+        
+    }
+    
+    myTest2(myaccount): Observable<any> {
+        
+        console.log("$$$$$$$$$$ myTest2");
+        var obs$ = Observable.create( observer => {
+                       var localTx;
+                       console.log("$$$$$$$$$$ before filter myTest2");
+                      
+//                       var filter = web3.eth.filter({fromBlock: 1, toBlock: web3.eth.blockNumber, address: myaccount});
+//                       filter.get((errorF, result) => {
+//                           console.log("$$$$$$$$$$ filter result: " + result);
+//                         if(!errorF) {
+//                             console.log("$$$$$$$$$$ filter: " + result);
+                             
+                       var cnt$ = interval(1).scan(x => x + 1).takeWhile(x => x <= web3.eth.blockNumber);
+                       cnt$.subscribe(
+                          x => {
+                             web3.eth.getBlock(x, true, (error, block) => {
+                                 if(!error) {
+                                         if(block.transactions.length > 0) {
+                                             console.log("tx.length for block#: " + x + " =============> " + block.transactions.length);
+
+                                             
+                                             
+                                             block.transactions.forEach( (tranz) => {
+//                                               parsedObj =  JSON.parse(JSON.stringify(e));
+                                                 var parsedObj =  JSON.parse(JSON.stringify(tranz));
+                                                 
+                                                 if (myaccount == "*" || myaccount == parsedObj.from || myaccount == parsedObj.to) {
+                                                     //                  localTrans.push("tx hash="+e.hash+"; txIdx="+e.transactionIndex+"; value="+e.value+"\n");
+                                                     console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& => " + block.transactions.length);
+                                                     
+                                                     localTx = { 
+                                                             hash: parsedObj.hash,
+                                                             nonce: parsedObj.nonce,
+                                                             blockHash: parsedObj.blockHash,
+                                                             blockNumber: parsedObj.blockNumber,
+                                                             transactionIndex: parsedObj.transactionIndex,
+                                                             from: parsedObj.from,
+                                                             to: parsedObj.to,
+                                                             value: parsedObj.value,
+                                                             gasPrice: parsedObj.gasPrice,
+                                                             gas: parsedObj.gas,
+                                                             input: 0//parsedObj.input
+                                                     };
+                                                     
+//                                                    this.transactions.push(localTx);
+                                                     this.txSource.next(localTx);                                                     
+//                                                     observer.next(x);
+//                                                     localTrans.push(localTx);
+//                                                     this.txs.push(localTx);
+                                                     //this.txSource.next(localTx);
+                                                     
+                                                     console.log("  tx hash          : " + parsedObj.hash + "\n"
+                                                             + "   nonce           : " + parsedObj.nonce + "\n"
+                                                             + "   blockHash       : " + parsedObj.blockHash + "\n"
+                                                             + "   blockNumber     : " + parsedObj.blockNumber + "\n"
+                                                             + "   transactionIndex: " + parsedObj.transactionIndex + "\n"
+                                                             + "   from            : " + parsedObj.from + "\n" 
+                                                             + "   to              : " + parsedObj.to + "\n"
+                                                             + "   value           : " + parsedObj.value + "\n"
+                                                     //      + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toUTCString() + "\n"
+                                                             + "   gasPrice        : " + parsedObj.gasPrice + "\n"
+                                                             + "   gas             : " + parsedObj.gas + "\n"
+                                                             + "   input           : " + 0);//parsedObj.input);
+                                                     
+//                                                     console.log("=============> " + localTrans);
+//                                                         this.txSource.next(localTrans);
+                                                 }
+                                             });
+                                             
+                                             
+                                             
+                                             
+                                             
+                                             
+                                             
+                                             
+                                             
+                                             
+                                             
+//                                             this.txSource.next(this.buildFakeTx(x, block.transactions.length));
+//                                             observer.next(x);
+                                         }//t21
+                                 } else {
+                                     console.log("web3.eth.getBlock ERROR!!! " + error);
+                                 }
+                             })
+                             observer.next(x);
+                          },
+                          error => {//d
+                              console.log("observer ERROR!!! " + error);
+                          }
+                       );
+                             
+//                        }, 1000);
+                             
+        });
+
+            
+        //ret
+        
+        return obs$;
+        
         
     }
     

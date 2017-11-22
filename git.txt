@@ -1,0 +1,53 @@
+1.Create new:
+============
+
+git init
+git add .
+git commit -m "Message"
+
+git remote add origin remote/path/to/repositoryL
+# Sets the new remote
+git remote -v
+# Verifies the new remote URL
+
+git push origin master
+# Pushes the changes in your local repository up to the remote repository you specified as the origi
+
+
+2. Update from:
+===============
+
+git pull
+
+
+3. Commit and push to:
+======================
+
+status:
+git status
+
+add/deleted:
+git add -A
+
+only changes:
+git commit -m "Message"
+
+push to remote:
+git push origin master
+
+
+4. Get first time from remote:
+==============================
+
+git clone remoteUrl localDir
+git clone username@host:/path/to/repository
+
+5. Override local changes from remote:
+======================================
+
+git checkout -- <filename>
+this replaces the changes in your working tree with the last content in HEAD. Changes already added to the index, as well as new files, will be kept.
+
+git fetch origin
+git reset --hard origin/master
+to drop all local changes and commits, fetch the latest history from the server and point local master branch at it.
