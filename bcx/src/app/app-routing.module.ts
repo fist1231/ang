@@ -16,7 +16,7 @@ const routes: Routes = [
         path: 'transactions/:account',
         component: TxListComponent,
         resolve: {
-            txs: TransactionResolver
+            transactions: TransactionResolver
         }
     },
     {path: 'detail/:id', component: BlockDetailComponent}

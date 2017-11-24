@@ -3,7 +3,7 @@ import { Block } from '../block';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { BlockServiceTs }  from '../block.service.ts';
+import { BlockServiceTs }  from '../block.service';
 
 @Component({
   selector: 'app-block-detail',

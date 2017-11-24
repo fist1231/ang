@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Block } from '../block';
-import { BlockServiceTs } from '../block.service.ts';
+import { BlockServiceTs } from '../block.service';
 import Web3 from 'web3';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';

@@ -43,8 +43,13 @@ export class TxListComponent implements OnInit {
     //        private location: Location
     //  ) {}
 
+    constructor(private route: ActivatedRoute, private location: Location) {}
+
 
     ngOnInit() {
+        this.transactions.push(this.route.snapshot.data['transactions']);
+        
+        
         //        this.getTxs();
         //        this.firstThou();
     }
@@ -140,7 +145,7 @@ export class TxListComponent implements OnInit {
     }
 
     goBack() {
-        //        this.location.back();
+                this.location.back();
     }
 
     sandbox() {

@@ -8,12 +8,15 @@ import { BlocksComponent } from './blocks/blocks.component';
 import { BlockDetailComponent } from './block-detail/block-detail.component';
 import { BlockPreviewComponent } from './block-detail/block-preview.component';
 
-import {BlockServiceTs} from './block.service.ts';
+import {BlockServiceTs} from './block.service';
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 import { AppRoutingModule } from './/app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TxListComponent } from './tx-list/tx-list.component'
+
+import { TransactionResolver } from './tx-list/transaction.resolver'
+
 
 @NgModule({
   declarations: [
@@ -30,7 +33,7 @@ import { TxListComponent } from './tx-list/tx-list.component'
     FormsModule,
     AppRoutingModule
   ],
-  providers: [BlockServiceTs, MessageService],
+  providers: [BlockServiceTs, MessageService, TransactionResolver],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
