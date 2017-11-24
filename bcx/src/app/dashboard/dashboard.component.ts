@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Block } from '../block';
-import { BlockService } from '../block.service';
+import { BlockServiceTs } from '../block.service.ts';
 import Web3 from 'web3';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     filtr = web3.eth.filter('latest');
 
-    constructor(private blockService: BlockService) { }
+    constructor(private blockService: BlockServiceTs) { }
 
     ngOnInit() {
         this.getStats();

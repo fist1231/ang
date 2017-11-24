@@ -3,7 +3,7 @@ import { Block } from '../block';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { BlockService }  from '../block.service';
+import { BlockServiceTs }  from '../block.service.ts';
 
 @Component({
   selector: 'app-block-detail',
@@ -16,7 +16,7 @@ export class BlockDetailComponent implements OnInit {
     block: Block;
 
     constructor(private route: ActivatedRoute,
-            private blockService: BlockService,
+            private blockService: BlockServiceTs,
             private location: Location
     ) { }
 

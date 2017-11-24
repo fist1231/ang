@@ -8,7 +8,7 @@ import { BlocksComponent } from './blocks/blocks.component';
 import { BlockDetailComponent } from './block-detail/block-detail.component';
 import { BlockPreviewComponent } from './block-detail/block-preview.component';
 
-import {BlockService} from './block.service';
+import {BlockServiceTs} from './block.service.ts';
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 import { AppRoutingModule } from './/app-routing.module';
@@ -30,7 +30,7 @@ import { TxListComponent } from './tx-list/tx-list.component'
     FormsModule,
     AppRoutingModule
   ],
-  providers: [BlockService, MessageService],
+  providers: [BlockServiceTs, MessageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
