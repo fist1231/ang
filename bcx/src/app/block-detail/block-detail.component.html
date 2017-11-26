@@ -1,7 +1,7 @@
-<div class="details" *ngIf="block">
+<div class="details" *ngIf="block$ | async as block; else loading">
 
 	<h4>
-		{{ block.id }} Details
+		Block:{{ block.id }} Details
 		<button (click)="goBack()">Back</button>
 	</h4>
 	<div class="divTable">

@@ -34,41 +34,39 @@ export class TxListComponent implements OnInit {
     transactions: Tx[] = [];
     transactions$: Observable<Tx[]>;
 
-    tranz: Observable<Tx[]>;
+    tranz$: Observable<Tx[]>;
     subWatch: any;
 
 
-    //    constructor(private route: ActivatedRoute,
-    //        private blockService: BlockServiceTs,
-    //        private location: Location
-    //  ) {}
+    constructor(private route: ActivatedRoute,
+        private blockService: BlockServiceTs,
+        private location: Location
+    ) {}
 
-    constructor(private route: ActivatedRoute, private location: Location) {}
 
 
     ngOnInit() {
-        this.transactions.push(this.route.snapshot.data['transactions']);
-        
-        
+        //        this.transactions.push(this.route.snapshot.data['transaction']);
+
         //        this.getTxs();
-        //        this.firstThou();
+        this.firstThou();
     }
 
-    //    firstThou() {
-    //        //        this.blockService.getTransactionsByBlk(1).subscribe(txs => this.transactions = txs);
-    //        this.subWatch = this.blockService.txAnnounced$.subscribe(txs => {
-    //            this.transactions.push(txs);
-    //            console.log('Un- Sourced +++++++++++++++++++++++++++++++++++> ' + txs);
-    //            console.log('Un- Sourced +++++++++++++++++++++++++++++++++++> ' + this.transactions);
-    //
-    //        }
-    //        );
-    //
-    //
-    //        //      this.getTran().subscribe(txs => this.transactions = txs);
-    //        //      return thistions;
-    //
-    //    }
+    firstThou() {
+        //        this.blockService.getTransactionsByBlk(1).subscribe(txs => this.transactions = txs);
+        this.subWatch = this.blockService.txAnnounced$.subscribe(txs => {
+            this.transactions.push(txs);
+            console.log('Un- Sourced +++++++++++++++++++++++++++++++++++> ' + txs);
+            console.log('Un- Sourced +++++++++++++++++++++++++++++++++++> ' + this.transactions);
+
+        }
+        );
+
+
+        //      this.getTran().subscribe(txs => this.transactions = txs);
+        //      return thistions;
+
+    }
 
 
     //    getTran(): Observable<Tx[]> {
@@ -101,14 +99,14 @@ export class TxListComponent implements OnInit {
     //    }
 
     getMoreTxs() {
-        //        const account = +this.route.snapshot.paramMap.get('account');
-        //        console.log('getTransactions for account = ' + account);
-        //
-        //        //        this.blockService.getTransactionsByBlk(1, account).subscribe(traaan => this.transactions = traa        
-        //        this.blockService.fetchTxs(1, account).subscribe(x => {
-        //            console.log('from component x = '
-        //                + x);
-        //        });
+        const account = this.route.snapshot.paramMap.get('account');
+        console.log('getTransactions for account = ' + account);
+
+        //        this.blockService.getTransactionsByBlk(1, account).subscribe(traaan => this.transactions = traa        
+        this.blockService.fetchTxs(1, account).subscribe(x => {
+            console.log('from component x = '
+                + x);
+        });
 
 
 
@@ -145,7 +143,7 @@ export class TxListComponent implements OnInit {
     }
 
     goBack() {
-                this.location.back();
+        this.location.back();
     }
 
     sandbox() {

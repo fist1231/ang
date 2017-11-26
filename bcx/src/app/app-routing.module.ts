@@ -5,21 +5,30 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {BlockDetailComponent} from './block-detail/block-detail.component';
 import {TxListComponent} from './tx-list/tx-list.component';
 import {TransactionResolver} from './tx-list/transaction.resolver';
+import {BlockDetailResolver} from './block-detail/block-detail.resolver';
 
 
 const routes: Routes = [
     {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
     {path: 'blocks', component: BlocksComponent},
     {path: 'dashboard', component: DashboardComponent},
-    //    {path: 'transactions/:account', component: TxListComponent},
+    {path: 'transactions/:account', component: TxListComponent},
+    //    {
+    //        path: 'transactions/:account',
+    //        component: TxListComponent,
+    //        resolve: {
+    //            transaction: TransactionResolver
+    //        }
+    //    },
+    //    {path: 'detail/:id', component: BlockDetailComponent}
     {
-        path: 'transactions/:account',
-        component: TxListComponent,
+        path: 'detail/:id',
+        component: BlockDetailComponent,
         resolve: {
-            transactions: TransactionResolver
+            blockDetail: BlockDetailResolver
+
         }
-    },
-    {path: 'detail/:id', component: BlockDetailComponent}
+    }
 ];
 
 @NgModule({

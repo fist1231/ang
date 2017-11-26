@@ -65,7 +65,10 @@ export class BlockServiceTs implements OnDestroy {
 
     getBlock(id: number): Observable<Block> {
         // Todo: send the message _after_ fetching the block
-        console.log('BLOCKS size = ' + this.BLOCKS.length);
+        //        console.log('BLOCKS size = ' + this.BLOCKS.length);
+        //        console.log('BLOCKS = ' + JSON.stringify(this.BLOCKS));
+        //        console.log('BLOCK id = ' + id);
+        //        console.log('block = ' + this.BLOCKS.find(blk => blk.id === id));
         this.messageService.add(`BlockService: fetched block id=${id}`);
         return of(this.BLOCKS.find(blk => blk.id === id));
     }
@@ -724,6 +727,13 @@ export class BlockServiceTs implements OnDestroy {
             //                         if(!errorF) {
             //               $$$$$$$$ filter: " + result);
 
+
+            /* test data            
+                        console.log('building fake Tx');
+                        const ftx = this.buildFakeTx(100, 100);
+                        this.txSource.next(ftx);
+                        observer.next(77);
+            */
             const cnt$ = interval(1).scan(x => x + 1).takeWhile(x => x <= web3.eth.blockNumber);
             cnt$.subscribe(
                 x => {
@@ -757,11 +767,11 @@ export class BlockServiceTs implements OnDestroy {
                                             input: 0// parsedObj.input
                                         };
 
-                                        //                                                    this.transactions.push(localTx);
+                                        // this.transactions.push(localTx);
                                         this.txSource.next(localTx);
-                                        //                                                     observer.next(x);
-                                        //                                                     localTrans.push(localTx);
-                                        //                                                                 // this.txSource.next(localTx);
+                                        //  observer.next(x);
+                                        // localTrans.push(localTx);
+                                        // this.txSource.next(localTx);
 
                                         console.log('  tx hash          : ' + parsedObj.hash + '\n'
                                             + '   nonce           : ' + parsedObj.nonce + '\n'
@@ -800,12 +810,12 @@ export class BlockServiceTs implements OnDestroy {
                         }
                     });
                     observer.next(x);
+
                 },
                 error => {// d
                     console.log('observer ERROR!!! ' + error);
                 }
             );
-
             //                                   
         });
 
