@@ -1,0 +1,26 @@
+npm install bootstrap --save
+npm install datatables.net --save
+npm install datatables.net-bs --save
+npm install datatables.net-select --save
+npm install datatables.net-select-bs --save
+npm install jquery --save
+npm install @types/jquery --save-dev
+
+
+angular-cli.json file:
+"styles": [
+   "styles.css",
+   "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+   "../node_modules/bootstrap/dist/css/bootstrap-theme.min.css",
+   "../node_modules/datatables.net-bs/css/dataTables.bootstrap.css",
+   "../node_modules/datatables.net-select-bs/css/select.bootstrap.css"
+ ],
+ 
+ 
+import * as $ from 'jquery';
+import 'datatables.net'
+
+    let exampleId: any = $('#example');
+    this.tableWidget = exampleId.DataTable({
+      select: true
+    });

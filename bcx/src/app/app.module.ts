@@ -17,6 +17,7 @@ import {TxListComponent} from './tx-list/tx-list.component';
 
 import {TransactionResolver} from './tx-list/transaction.resolver';
 import {BlockDetailResolver} from './block-detail/block-detail.resolver';
+import { BlockTableComponent } from './block-table/block-table.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import {BlockDetailResolver} from './block-detail/block-detail.resolver';
         BlockPreviewComponent,
         MessagesComponent,
         DashboardComponent,
-        TxListComponent
+        TxListComponent,
+        BlockTableComponent
     ],
     imports: [
         BrowserModule,
