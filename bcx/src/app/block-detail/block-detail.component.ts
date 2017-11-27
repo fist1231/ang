@@ -1,10 +1,13 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, OnInit, Input, TemplateRef} from '@angular/core';
 import {Block} from '../block';
 import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {Observable} from 'rxjs/Observable';
 
 import {BlockServiceTs} from '../block.service';
+
+import {BsModalRef, BsModalService} from 'ngx-bootstrap/modal';
+
 
 @Component({
     selector: 'app-block-detail',
@@ -17,6 +20,8 @@ export class BlockDetailComponent implements OnInit {
     block: Block;
     block$: Observable<Block>;
 
+    public modalRef: BsModalRef;
+
 
     //    constructor(private route: ActivatedRoute,
     //        private blockService: BlockServiceTs,
@@ -25,7 +30,8 @@ export class BlockDetailComponent implements OnInit {
 
 
     constructor(private route: ActivatedRoute,
-        private location: Location
+        private location: Location,
+        private modalService: BsModalService
     ) {}
 
 
@@ -53,4 +59,11 @@ export class BlockDetailComponent implements OnInit {
     goBack(): void {
         this.location.back();
     }
+
+    public openModal(template: TemplateRef<any>) {
+        this.getBlock();
+        this.modalRef = this.modalService.show(template, {block: this.block$});
+    }
+
+
 }

@@ -9,5 +9,5 @@ export class Tx {
     value: number;
     gasPrice: number;
     gas: number;
-    input: number
+    input: number;
 }

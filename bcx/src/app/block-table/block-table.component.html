@@ -1,3 +1,5 @@
+<div class="container-fluid">
+
 <!-- 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 
@@ -5,33 +7,37 @@
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
 -->
 
-<table class="blockTable" id="table_id">
+<table class="table table-dark" id="table_id">
 
 	<thead>
 		<tr>
-			<th>Id</th>
-			<th>miner</th>
-			<th>Difficulty</th>
-			<th>Gas Limit</th>
-			<th>Gas Used</th>
-			<!-- th>Hash</th-->
-			<th>Nonce</th>
-			<th>Size</th>
-			<th>Timestamp</th>
-			<th>Total Difficulty</th>
+			<th scope="col">Id</th>
+			<th scope="col">miner</th>
+			<th scope="col">Difficulty</th>
+			<th scope="col">Gas Limit</th>
+			<th scope="col">Gas Used</th>
+			<!-- th scope="col">Hash</th-->
+			<th scope="col">Nonce</th>
+			<th scope="col">Size</th>
+			<th scope="col">Timestamp</th>
+			<th scope="col">Total Difficulty</th>
 		</tr>
 	</thead>
-	<tr *ngFor="let block of blocks;let index = index;">
-		<td>{{block.id}}</td>
-		<td>{{block.miner}}</td>
-		<td>{{block.difficulty}}</td>
-		<td>{{block.gasLimit}}</td>
-		<td>{{block.gasUsed}}</td>
-		<!-- td>{{block.hash}}</td-->
-		<td>{{block.nonce}}</td>
-		<td>{{block.size}}</td>
-		<td>{{block.timestamp}}</td>
-		<td>{{block.totalDifficulty}}</td>
-	</tr>
+	<tbody>
+		<tr *ngFor="let block of blocks;let index = index;">
+			<td>{{block.id}}</td>
+			<td>{{block.miner}}</td>
+			<td>{{block.difficulty}}</td>
+			<td>{{block.gasLimit}}</td>
+			<td>{{block.gasUsed}}</td>
+			<!-- td>{{block.hash}}</td-->
+			<td>{{block.nonce}}</td>
+			<td>{{block.size}}</td>
+			<td>{{block.timestamp}}</td>
+			<td>{{block.totalDifficulty}}</td>
+		</tr>
+	</tbody>
 
 </table>
+
+</div>

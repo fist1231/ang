@@ -1,4 +1,8 @@
-npm install bootstrap --save
+npm install bootstrap --save //Bootstrap 3
+or
+npm install bootstrap@4.0.0-beta.2
+//npm install bootstrap@next --save //Bootstrap 4
+
 npm install datatables.net --save
 npm install datatables.net-bs --save
 npm install datatables.net-select --save

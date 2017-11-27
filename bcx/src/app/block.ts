@@ -9,5 +9,5 @@ export class Block {
     size: number;
     timestamp: number;
     totalDifficulty: number;
-    transactions: string[]
+    transactions: string[];
 }

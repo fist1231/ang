@@ -17,8 +17,11 @@ import {TxListComponent} from './tx-list/tx-list.component';
 
 import {TransactionResolver} from './tx-list/transaction.resolver';
 import {BlockDetailResolver} from './block-detail/block-detail.resolver';
-import { BlockTableComponent } from './block-table/block-table.component';
+import {BlockTableComponent} from './block-table/block-table.component';
 
+import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
+import {TooltipModule} from 'ngx-bootstrap/tooltip';
+import {ModalModule} from 'ngx-bootstrap/modal';
 
 @NgModule({
     declarations: [
@@ -34,9 +37,13 @@ import { BlockTableComponent } from './block-table/block-table.component';
     imports: [
         BrowserModule,
         FormsModule,
-        AppRoutingModule
+        AppRoutingModule,
+        BsDropdownModule.forRoot(),
+        TooltipModule.forRoot(),
+        ModalModule.forRoot()
     ],
     providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    exports: [BsDropdownModule, TooltipModule, ModalModule]
 })
 export class AppModule {}

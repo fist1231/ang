@@ -2,7 +2,7 @@
 
   <h4>
   	Messages
-  	<button class="clear" (click)="messageService.clear()">Clear</button>
+  	<button type="button" class="btn btn-primary" (click)="messageService.clear()">Clear</button>
   </h4>
   <div class="message" *ngFor='let message of messageService.messages'> <label style="font-size: small;"><i>{{message}}</i></label> </div>
 
