@@ -7,6 +7,7 @@ import {TxListComponent} from './tx-list/tx-list.component';
 import {TransactionResolver} from './tx-list/transaction.resolver';
 import {BlockDetailResolver} from './block-detail/block-detail.resolver';
 import {BlockTableComponent} from './block-table/block-table.component';
+import {BlockTableSubjComponent} from './block-table-subj/block-table-subj.component';
 
 
 const routes: Routes = [
@@ -31,6 +32,7 @@ const routes: Routes = [
         }
     },
     {path: 'blockTable', component: BlockTableComponent},
+    {path: 'blockTableSubj', component: BlockTableSubjComponent}
 ];
 
 @NgModule({

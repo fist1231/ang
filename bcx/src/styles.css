@@ -25,6 +25,7 @@ body, input[text], button {
 
 .center {
 	text-align: center;
+	margin-top: 50px;
 }
 
 div.center {

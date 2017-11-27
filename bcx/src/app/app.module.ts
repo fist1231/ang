@@ -19,9 +19,15 @@ import {TransactionResolver} from './tx-list/transaction.resolver';
 import {BlockDetailResolver} from './block-detail/block-detail.resolver';
 import {BlockTableComponent} from './block-table/block-table.component';
 
-import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
+import { DataTablesModule } from 'angular-datatables';
+
+
+//import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
 import {TooltipModule} from 'ngx-bootstrap/tooltip';
 import {ModalModule} from 'ngx-bootstrap/modal';
+
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { BlockTableSubjComponent } from './block-table-subj/block-table-subj.component';
 
 @NgModule({
     declarations: [
@@ -32,18 +38,21 @@ import {ModalModule} from 'ngx-bootstrap/modal';
         MessagesComponent,
         DashboardComponent,
         TxListComponent,
-        BlockTableComponent
+        BlockTableComponent,
+        BlockTableSubjComponent
     ],
     imports: [
         BrowserModule,
         FormsModule,
         AppRoutingModule,
-        BsDropdownModule.forRoot(),
+//        BsDropdownModule.forRoot(),
         TooltipModule.forRoot(),
-        ModalModule.forRoot()
+        ModalModule.forRoot(),
+        NgbModule.forRoot(),
+        DataTablesModule
     ],
     providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver],
     bootstrap: [AppComponent],
-    exports: [BsDropdownModule, TooltipModule, ModalModule]
+//    exports: [BsDropdownModule, TooltipModule, ModalModule]
 })
 export class AppModule {}
