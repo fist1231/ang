@@ -5,7 +5,7 @@ npm install bootstrap@4.0.0-beta.2 --save
 
 npm install --save @ng-bootstrap/ng-bootstrap
 
-npm install popper.js --save //?
+npm install popper.js --save //? 
 
 npm install datatables.net --save
 npm install datatables.net-bs --save
@@ -40,3 +40,29 @@ import 'datatables.net'
     this.tableWidget = exampleId.DataTable({
       select: true
     });
+    
+    
+npm install jquery --save
+npm install @types/jquery --save
+npm install popper.js --save    
+npm install bootstrap@4.0.0-beta.2 --save
+npm install --save @ng-bootstrap/ng-bootstrap    
+
+npm install datatables.net-dt --save
+npm install angular-datatables --save
+npm install @types/datatables.net --save
+
+"styles": [
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+        "styles.css"
+      ],
+      "scripts": [
+        "../node_modules/jquery/jquery.min.js",
+        "../node_modules/popper.js/dist/umd/popper.min.js",
+        "../node_modules/bootstrap/dist/js/bootstrap.min.js"
+      ],
+      
+      
+      
+npm install angular2-datatable --save
+      

@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, AfterViewInit, DoCheck, Input, ViewChild } from '@angular/core';
 import { Block } from '../block';
 import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
 import { BlockServiceTs } from '../block.service';
 import { Subject } from 'rxjs/Subject';
 //import * as $ from 'jquery';
 //import 'datatables.net';
 import { DataTableDirective } from 'angular-datatables';
+
+import 'rxjs/add/operator/delay';
 
 @Component( {
     selector: 'app-block-table-subj',
@@ -14,7 +17,7 @@ import { DataTableDirective } from 'angular-datatables';
 } )
 
 
-export class BlockTableSubjComponent implements OnInit, OnDestroy {
+export class BlockTableSubjComponent implements OnInit, OnDestroy, AfterViewInit {
 
     blocks: Block[] = [];
     subBlocks: any;
@@ -64,13 +67,16 @@ export class BlockTableSubjComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.subBlocks.unsubscribe();
-        this.subSubject.unsubscribe();
+//        this.subBlocks.unsubscribe();
+//        this.subSubject.unsubscribe();
     }
 
     ngAfterViewInit() {
         //        this.addJTable();
-        this.dtTrigger.next();
+        
+        console.log( '............. before delay');
+        of(this.dtTrigger.next()).delay(1000);
+        console.log( '............. after delay');
     }
 
     rerender(): void {

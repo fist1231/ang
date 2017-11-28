@@ -49,7 +49,7 @@ import { BlockTableSubjComponent } from './block-table-subj/block-table-subj.com
         TooltipModule.forRoot(),
         ModalModule.forRoot(),
         NgbModule.forRoot(),
-        DataTablesModule
+        DataTablesModule.forRoot()
     ],
     providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver],
     bootstrap: [AppComponent],
