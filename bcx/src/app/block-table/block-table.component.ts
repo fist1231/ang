@@ -24,6 +24,7 @@ import 'rxjs/add/operator/map';
 export class BlockTableComponent implements OnInit, OnDestroy {
 
     blocks: Block[] = [];
+    localBlocks: Block[] = [];
     blocks$: Observable<Block[]>;
     subBlocks: any;
     //    public tableWidget: any;
@@ -38,48 +39,37 @@ export class BlockTableComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
+        this.dtTriggerO.next();
         this.dtOptionsO = {
             pagingType: 'full_numbers',
             pageLength: 25
         };
-
-        //      this.blocks$ = this.blockService.populateBlocks( 50 ).map(this.reload());
-        //      this.dtTrigger.next();
-        this.subBlocks = this.blockService.fetchBlocks( 50 ).subscribe( x => {
-            this._ngZone.run(() => {
-                this.blocks = x;
-            } );
-            console.log( '++++++++++++++++++++++++++> t ' + JSON.stringify( x ) );
-            //            this.dtTriggerO.next();
-
-            //            return x;
-            console.log( '++++++++++++++++++++++++++> this.dtTrigger.next() ' );
-            //                    this.rerender(2);
-            //            this.rerender(2);
-            //            this.dtTriggerO.complete();
-        } );
-
-        //        console.log( '............. before delay');
-        //        setTimeout(() => {
-        ////            this.dtTrigger.next();
-        ////            this.dtTrigger.subscribe(x => this.rerender());
-        //            this.rerender()
-        //        }, 5000);
-        //        
-        //        console.log( '............. after delay');
-
-
+        this.getBlocks();
     }
 
-    reload() {
-        this.dtTriggerO.next();
-        console.log( '++++++++++++++++++++++++++> reload dtInstance = ' + this.dtElementO.dtInstance );
-        //        this.rerender(3);
+    
+    
+    getBlocks() {
+        this.localBlocks = []; 
+        this.subBlocks = this.blockService.fetchBlocks( 100 ).subscribe( 
+                next => {
+                    this.localBlocks = next;
+                },
+                error => {
+                  console.log('Block-table.component subscribe ERROR: ' + error);  
+                },
+                () => {
+                    this._ngZone.run(() => {
+                      this.blocks = this.localBlocks;
+                    } );
+                    this.rerender(3);
+                    console.log( '++++++++++++++++++++++++++> this.blocks onComplete: ' + this.blocks.length );
+                }
+            );
     }
-
+    
     ngOnDestroy(): void {
-
-        //        this.subBlocks.unsubscribe();
+        this.subBlocks.unsubscribe();
     }
 
     ngAfterViewInit(): void {
@@ -103,35 +93,16 @@ export class BlockTableComponent implements OnInit, OnDestroy {
     }
 
     rerender( x ): void {
-        console.log( '############# pass: ' + x );
-        console.log( '++++++++++++++++++++++++++> rerender = ' + this.dtTriggerO );
-        console.log( '++++++++++++++++++++++++++> rerender dtElementO = ' + this.dtElementO );
-        console.log( '++++++++++++++++++++++++++> rerender dtInstance = ' + this.dtElementO.dtInstance );
-        //        if(this.dtElementO.dtInstance)
-        //        this.dtElementO.dtInstance.then(( dtInstance: DataTables.Api ) => {
-        if ( this.dtElementO.dtInstance )
-        {
+        if ( this.dtElementO.dtInstance ) {
             this.dtElementO.dtInstance.then(( dtInstance: DataTables.Api ) => {
-                console.log( '%%%%%%%%%%%%%%%%%%%% after:' + JSON.stringify( dtInstance.data() ) );
-                //                  // Destroy the table first
                 dtInstance.destroy();
-                //                          dtInstance.ajax.reload();
-                //                          console.log('%%%%%%%%%%%%%%%%%%%% after:' + JSON.stringify(dtInstance));
-                //                  dtInstance.destroy();
-                //                  // Call the dtTrigger to rerender again
                 this.dtTriggerO.next();
             } );
 
-        } else
-        {
+        } else {
             this.dtTriggerO.next();
 
         }
     }
-
-    //    displayToConsole(): void {
-    //        this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => console.log(dtInstance));
-    //    }
-
 
 }

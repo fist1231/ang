@@ -45,7 +45,7 @@ export class BlockServiceTs implements OnDestroy {
     txSource = new Subject<Tx>();
     txAnnounced$ = this.txSource.asObservable();
 
-    blocksSource = new Subject<Block>();
+    blocksSource: Subject<Block> = new Subject<Block>();
     blocksAnnounced$ = this.blocksSource.asObservable();
 
     //    public that = this;
@@ -192,7 +192,7 @@ export class BlockServiceTs implements OnDestroy {
 
             web3.eth.getBlockNumber().then( x => {
                 const localBlocks = [];
-                const cnt$ = interval( 1 ).scan( x => x + 1 ).takeWhile( x => x < numberOfBlocks ); // web3.eth.blockNumber );
+                const cnt$ = interval( 10 ).scan( x => x + 1 ).takeWhile( x => x < numberOfBlocks ); // web3.eth.blockNumber );
                 cnt$.map(
                     i => {
                         const blkNum = x - i;
@@ -220,10 +220,19 @@ export class BlockServiceTs implements OnDestroy {
                         } );
                     }
                 )
-                    .subscribe( lbs => {
+                .subscribe( 
+                    next => {
+                        console.log( 'fetch next: fetchBlocks.length  = ' + localBlocks.length );
+                    },
+                    error => {
+                        console.log( 'fetch error: ERROR: ' + error );
+                    },
+                    () => {
                         observer.next( localBlocks );
-                        console.log( 'localBlocks:  = ' + localBlocks.length );
-                    } );
+                        console.log( '!!!!!!!!!!!!!! fetch complete: localBlocks.length  = ' + localBlocks.length );
+                        observer.complete();
+                    }
+                );
 
 
                 /*                blk = web3.eth.getBlock( web3.eth.blockNumber - i );//
@@ -965,17 +974,21 @@ export class BlockServiceTs implements OnDestroy {
     fillBlocks( numberOfBlocks ): Observable<any> {
 
         const obs$ = Observable.create( observer => {
+            
+//            this.blocksSource = new Subject<Block>();
+//            this.blocksAnnounced$ = this.blocksSource.asObservable();
+            this.blocksSource.next();
+            
             console.log( '++++++++++++++>> fillBlocks' );
-
-            const localBlocks = [];
             let blk: object;
             let parsedObj;
 
-            const cnt$ = interval( 0 ).scan( x => x + 1 ).takeWhile( x => x <= numberOfBlocks );
-            cnt$.subscribe(
-                x => {
-                    web3.eth.getBlockNumber().then( k => {
-                        const blkNum = k - x;
+            web3.eth.getBlockNumber().then( k => {
+                const localBlocks = [];
+                const cnt$ = interval( 0 ).scan( x => x + 1 ).takeWhile( x => x < numberOfBlocks );
+                cnt$.map(
+                    i => {
+                        const blkNum = k - i;
                         console.log( 'Fetched block: ' + blkNum );
                         return web3.eth.getBlock( blkNum ).then( z => {
                             blk = z;
@@ -998,11 +1011,27 @@ export class BlockServiceTs implements OnDestroy {
                                 transactions: parsedObj.transactions
                             };
                             localBlocks.push( blck );
-
-                            this.blocksSource.next( blck );
+                            observer.next( blck );
+//                            this.blocksSource.next( blck );
 
                         } );
-                    } );
+                    }
+                )
+                .subscribe( 
+                    next => {
+                        console.log( 'fillBlocks next: fillBlocks.length  = ' + localBlocks.length );
+                    },
+                    error => {
+                        console.log( 'fillBlocks ERROR: ' + error );
+                    },
+                    () => {
+//                        observer.next( localBlocks );
+                        console.log( '^^^^^^^^^^^^ fillBlocks complete: localBlocks.length  = ' + localBlocks.length );
+                        observer.complete();
+//                        this.blocksSource.complete();
+                    }
+                );
+                    
 
                     //                    blk = web3.eth.getBlock( web3.eth.blockNumber - x );
                     //                    console.log( 'Fetched block: ' + ( web3.eth.blockNumber - x ) );
@@ -1027,18 +1056,14 @@ export class BlockServiceTs implements OnDestroy {
                     //                    };
                     //                    localBlocks.push( blck );
                     //                    this.blocksSource.next( blck );
+
                 },
-                error => {// d
+                error => {
                     console.log( 'observer ERROR!!! ' + error );
                 }
             );
-
-            observer.next();
-            observer.complete();
         } );
-
         return obs$;
-
 
     }
 

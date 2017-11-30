@@ -9,6 +9,10 @@ import { EventEmitter, BlockHeader, Subscribe } from "web3/types";
 
 
 
+import { interval } from 'rxjs/observable/interval';
+import { Subject } from 'rxjs/Subject';
+
+
 //const web3 = new Web3( new Web3.providers.HttpProvider( 'http://localhost:9595' ) );
 //const web3 = new Web3( new Web3.providers.HttpProvider( 'http://localhost:9595' ) );
 const web3 = new Web3( Web3.givenProvider || "ws://localhost:9595" );
@@ -97,7 +101,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         console.log( 'OnInit' );
+                setTimeout(() => {
         this.getStats2();
+               }, 0 );
         //        this._ngZone.run(() => {
         //        setTimeout(() => {
         this.getBlocks();
@@ -105,8 +111,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
         //        } );
 
         this.watchBlockHeaders();
+        
+        
+        
     }
 
+    trySubjects() {
+        const interval$ = interval(1000).take(7);
+        
+        const subject = new Subject();
+
+        let z = interval$.subscribe(subject);
+        
+        subject.map(value => `Observer one ${value}`).subscribe(value => {
+          console.log(value);
+        });
+
+
+        setTimeout(() => {
+          subject.map(value => `Observer two ${value}`).subscribe(value => {
+             console.log(value);
+          });
+        }, 4000);
+        
+    }
+    
     ngOnDestroy() {
         console.log( 'onDestroy' );
         this.stopWatchingBlockHeaders();

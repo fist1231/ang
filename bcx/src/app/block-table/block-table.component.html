@@ -1,4 +1,3 @@
-<div class="container-fluid">
 
 <!-- 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -7,44 +6,42 @@
 <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
 -->
 
-<p>
-  <button type="button" class="btn waves-effect waves-light blue" (click)="rerender()">
-    Rerender
-  </button>
-</p>
+	<div *ngIf="blocks.length; then thenBlocks; else elseBlocks"></div>
+	
+	<ng-template #thenBlocks>
+		<!-- table class="table table-dark" id="table_id"-->
+		<table datatable [dtOptions]="dtOptionsO" [dtTrigger]="dtTriggerO" class="row-border hover">
+			<thead>
+				<tr>
+					<th scope="col">Id</th>
+					<th scope="col">miner</th>
+					<th scope="col">Difficulty</th>
+					<th scope="col">Gas Limit</th>
+					<th scope="col">Gas Used</th>
+					<!-- th scope="col">Hash</th-->
+					<th scope="col">Nonce</th>
+					<th scope="col">Size</th>
+					<th scope="col">Timestamp</th>
+					<th scope="col">Total Difficulty</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let block of blocks">
+					<td>{{block.id}}</td>
+					<td>{{block.miner}}</td>
+					<td>{{block.difficulty}}</td>
+					<td>{{block.gasLimit}}</td>
+					<td>{{block.gasUsed}}</td>
+					<!-- td>{{block.hash}}</td-->
+					<td>{{block.nonce}}</td>
+					<td>{{block.size}}</td>
+					<td>{{block.timestamp}}</td>
+					<td>{{block.totalDifficulty}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</ng-template>
+	<ng-template #elseBlocks>
+		<img width="50px;" src="/assets/spin.svg" />
+	</ng-template>
 
-<!-- table class="table table-dark" id="table_id"-->
-<table datatable="ng" [dtOptions]="dtOptionsO" [dtTrigger]="dtTriggerO" class="row-border hover">
-
-	<thead>
-		<tr>
-			<th scope="col">Id2</th>
-			<th scope="col">miner</th>
-			<th scope="col">Difficulty</th>
-			<th scope="col">Gas Limit</th>
-			<th scope="col">Gas Used</th>
-			<!-- th scope="col">Hash</th-->
-			<th scope="col">Nonce</th>
-			<th scope="col">Size</th>
-			<th scope="col">Timestamp</th>
-			<th scope="col">Total Difficulty</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr *ngFor="let block of blocks">
-			<td>{{block.id}}</td>
-			<td>{{block.miner}}</td>
-			<td>{{block.difficulty}}</td>
-			<td>{{block.gasLimit}}</td>
-			<td>{{block.gasUsed}}</td>
-			<!-- td>{{block.hash}}</td-->
-			<td>{{block.nonce}}</td>
-			<td>{{block.size}}</td>
-			<td>{{block.timestamp}}</td>
-			<td>{{block.totalDifficulty}}</td>
-		</tr>
-	</tbody>
-
-</table>
-
-</div>

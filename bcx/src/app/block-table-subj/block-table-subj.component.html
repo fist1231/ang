@@ -1,36 +1,44 @@
 <div class="container-fluid">
 
-<!-- table class="table" id="table_id"-->
-<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover" id="t_subj">
-	<thead>
-		<tr>
-			<th scope="col">Id</th>
-			<th scope="col">miner</th>
-			<th scope="col">Difficulty</th>
-			<th scope="col">Gas Limit</th>
-			<th scope="col">Gas Used</th>
-			<!-- th scope="col">Hash</th-->
-			<th scope="col">Nonce</th>
-			<th scope="col">Size</th>
-			<th scope="col">Timestamp</th>
-			<th scope="col">Total Difficulty</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr *ngFor="let block of blocks;let index = index;">
-			<td>{{block.id}}</td>
-			<td>{{block.miner}}</td>
-			<td>{{block.difficulty}}</td>
-			<td>{{block.gasLimit}}</td>
-			<td>{{block.gasUsed}}</td>
-			<!-- td>{{block.hash}}</td-->
-			<td>{{block.nonce}}</td>
-			<td>{{block.size}}</td>
-			<td>{{block.timestamp}}</td>
-			<td>{{block.totalDifficulty}}</td>
-		</tr>
-	</tbody>
+	<div *ngIf="blocks.length; then thenBlocks; else elseBlocks"></div>
+	
+	<ng-template #thenBlocks>
+		<!-- table class="table" id="table_id"-->
+		<table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" class="row-border hover" id="t_subj">
+			<thead>
+				<tr>
+					<th scope="col">Id</th>
+					<th scope="col">miner</th>
+					<th scope="col">Difficulty</th>
+					<th scope="col">Gas Limit</th>
+					<th scope="col">Gas Used</th>
+					<!-- th scope="col">Hash</th-->
+					<th scope="col">Nonce</th>
+					<th scope="col">Size</th>
+					<th scope="col">Timestamp</th>
+					<th scope="col">Total Difficulty</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let block of blocks;let index = index;">
+					<td>{{block.id}}</td>
+					<td>{{block.miner}}</td>
+					<td>{{block.difficulty}}</td>
+					<td>{{block.gasLimit}}</td>
+					<td>{{block.gasUsed}}</td>
+					<!-- td>{{block.hash}}</td-->
+					<td>{{block.nonce}}</td>
+					<td>{{block.size}}</td>
+					<td>{{block.timestamp}}</td>
+					<td>{{block.totalDifficulty}}</td>
+				</tr>
+			</tbody>
+		
+		</table>
+	</ng-template>
+	<ng-template #elseBlocks>
+		<img width="50px;" src="/assets/spin.svg" />
+	</ng-template>
 
-</table>
 
 </div>

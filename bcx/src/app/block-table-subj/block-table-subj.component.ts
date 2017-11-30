@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, OnDestroy, AfterViewInit, DoCheck, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy, AfterViewInit, DoCheck, Input, ViewChild, NgZone } from '@angular/core';
 import { Block } from '../block';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
@@ -17,53 +17,85 @@ import 'rxjs/add/operator/delay';
 } )
 
 
-export class BlockTableSubjComponent implements OnInit, OnDestroy, AfterViewInit {
+export class BlockTableSubjComponent implements OnInit, OnDestroy {
 
     blocks: Block[] = [];
     subBlocks: any;
     subSubject: any;
     public tableWidget: any;
-
-    dtOptions: DataTables.Settings = {};
-    dtTrigger: Subject<any> = new Subject();
+    localBlocks: Block[];
 
     @ViewChild( DataTableDirective )
     dtElement: DataTableDirective;
+    dtOptions: DataTables.Settings = {};
+    dtTrigger: Subject<any> = new Subject();
 
 
-    constructor( private blockService: BlockServiceTs ) { }
+    constructor( private blockService: BlockServiceTs, private _ngZone: NgZone ) { }
 
     ngOnInit() {
+        this.dtTrigger.next();
         this.dtOptions = {
             pagingType: 'full_numbers',
             pageLength: 10
         };
-        this.subscribeToSubj();
-        this.populateBlocks();
+        
+//        this.subscribeToSubj();
+//        this.populateBlocks();
+        
+        this.third();
 
     }
 
+    third() {
+        this.localBlocks = [];
+        const mySubject = new Subject<Block>();
+        this.blockService.fillBlocks( 100 ).subscribe(mySubject);
+        
+        mySubject
+        .subscribe( 
+                block => {
+                    console.log('xxxxxxxxxxxx Block-table-subj.component subscribe next: ' + block);  
+                    this.localBlocks.push( block );
+                },
+                error => {
+                    console.log('xxxxxxxxxxxx Block-table-subj.component subscribe ERROR: ' + error);  
+                },
+                () => {
+                    console.log( 'xxxxxxxxxxxxxxx=> tBlock-table-subj onComplete: ' + this.blocks.length );
+                    this._ngZone.run(() => {
+                      this.blocks = this.localBlocks;
+                    } );
+                    this.rerender();
+                }
+        );
+        
+    }
+    
+    
     populateBlocks() {
         this.subBlocks = this.blockService.fillBlocks( 20 ).subscribe();
         //        this.subBlocks = this.blockService.populateBlocks( 1000 ).subscribe();//
     }
 
     subscribeToSubj() {
-        this.subSubject = this.blockService.blocksAnnounced$.subscribe( block => {
-            this.blocks.push( block );
-            this.rerender();
-            //            this.dtTrigger.next( block );
-        } );
-    }
-
-    addJTable() {
-        const exampleId: any = $( '#table_id' );
-        this.tableWidget = exampleId.DataTable( {
-            select: true
-        } );
-
-        console.log( '+++++++++++ this.exampleId' + JSON.stringify( exampleId ) );
-
+        this.localBlocks = [];
+        this.subSubject = this.blockService.blocksAnnounced$.subscribe( 
+                block => {
+                    console.log('xxxxxxxxxxxx Block-table-subj.component subscribe next: ' + block);  
+                    this.localBlocks.push( block );
+                },
+                error => {
+                    console.log('xxxxxxxxxxxx Block-table-subj.component subscribe ERROR: ' + error);  
+                },
+                () => {
+                    console.log( 'xxxxxxxxxxxxxxx=> tBlock-table-subj onComplete: ' + this.blocks.length );
+                    this._ngZone.run(() => {
+                      this.blocks = this.localBlocks;
+                    } );
+                    this.rerender();
+                }
+        );
     }
 
     ngOnDestroy() {
@@ -72,32 +104,21 @@ export class BlockTableSubjComponent implements OnInit, OnDestroy, AfterViewInit
     }
 
     ngAfterViewInit() {
-        //        this.addJTable();
-        
-        console.log( '............. before delay');
-        of(this.dtTrigger.next()).delay(1000);
-        console.log( '............. after delay');
+//        this.dtTrigger.next();
     }
 
     rerender(): void {
-        this.dtElement.dtInstance.then(( dtInstance: DataTables.Api ) => {
-            // Destroy the table first
-            dtInstance.destroy();
-            // Call the dtTrigger to rerender again
+        if ( this.dtElement && this.dtElement.dtInstance ) {
+            this.dtElement.dtInstance.then(( dtInstance: DataTables.Api ) => {
+                // Destroy the table first
+                dtInstance.destroy();
+                // Call the dtTrigger to rerender again
+                this.dtTrigger.next();
+            } );
+        } else {
             this.dtTrigger.next();
-        } );
+
+        }
     }
 
-
-    /*    ngDoCheck() {
-            console.log( '+++++++++++ arr xchanged' );
-            //       this.dtTrigger.next();
-            //        console.log('~~~~~~~~~~~~~~~~~ this.tableWidget = ' + JSON.stringify(this.tableWidget));
-            //        if(this.tableWidget != null) {
-            //            this.tableWidget.draw();
-            //        }
-            //        this.addJTable();
-            //throw new Error( "Method not implemented." );
-        }
-    */
 }

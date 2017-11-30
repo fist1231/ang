@@ -1,31 +1,80 @@
 <div class="container-fluid">
 <div class="dash">
 <h4>Info:</h4>
-	Coinbase: {{coinbase$ | async}}
-	<br/>
-	Accounts:
-	<br/>
-	<table>
-	  <tr *ngFor="let act of accounts;let index = index;">
-	  <td>
-		<a routerLink="/transactions/{{act}}">
-	    	<span class="badge">{{act}}</span>
-	    </a>
-	    </td>
-	  </tr>
-	</table>
+
+<table class="accts">
+	<tr>
+		<td>
+			Coinbase:
+		</td>
+		<td> 
+			<span *ngIf="coinbase$ then thenCB; else elseCB"></span>
+			<ng-template #thenCB>{{coinbase$ | async}}</ng-template>
+			<ng-template #elseCB><img width="30px" src="/assets/spin.svg" /></ng-template>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Accounts:
+		</td>
+		<td>
+			<span *ngIf="accounts then thenACT; else elseACT"></span>	
+			<ng-template #thenACT>
+				<table>
+				  <tr *ngFor="let act of accounts;let index = index;">
+				  <td>
+					<a routerLink="/transactions/{{act}}">
+				    	<span class="badge">{{act}}</span>
+				    </a>
+				    </td>
+				  </tr>
+				</table>
+			</ng-template>
+			<ng-template #elseACT><img width="30px" src="/assets/spin.svg" /></ng-template>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Balance:
+		</td>
+		<td> 
+			<span *ngIf="balanceEther then thenBE; else elseBE"></span>
+			<ng-template #thenBE>{{balanceEther | currency:'&Xi;':'code':'1.2-2'}}</ng-template>
+			<ng-template #elseBE><img width="30px" src="/assets/spin.svg" /></ng-template>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Balance Wei:
+		</td>
+		<td>
+			<span *ngIf="balance then thenBW; else elseBW"></span>
+			<ng-template #thenBW>{{balance}}</ng-template>
+			<ng-template #elseBW><img width="30px" src="/assets/spin.svg" /></ng-template>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Last block #:
+		</td>
+		<td> 
+			<span *ngIf="latestBlock then thenLB; else elseLB"></span>
+			<ng-template #thenLB>{{latestBlock}}</ng-template>
+			<ng-template #elseLB><img width="30px" src="/assets/spin.svg" /></ng-template>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			Trans #:
+		</td>
+		<td> 
+			<span *ngIf="transactionsNum then thenBlock; else elseBlock"></span>
+			<ng-template #thenBlock>{{transactionsNum}}</ng-template>
+			<ng-template #elseBlock><img width="30px" src="/assets/spin.svg" /></ng-template>
+		</td>
+	</tr>
+</table>
 	
-	
-	
-	Balance: {{balanceEther | currency:'&Xi;':'code':'1.2-2'}}
-	<br/>
-	Balance Wei: {{balance}}
-	<br/>
-	Last block #: <span *ngIf="latestBlock then thenBlock; else elseBlock"></span>
-	<ng-template #thenBlock>{{latestBlock}}</ng-template>
-	<ng-template #elseBlock>wait ...</ng-template>
-	<br/>
-	Trans #: {{transactionsNum}}
 
 </div>
 
