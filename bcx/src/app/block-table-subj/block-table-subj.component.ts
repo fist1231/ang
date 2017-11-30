@@ -55,14 +55,12 @@ export class BlockTableSubjComponent implements OnInit, OnDestroy {
         mySubject
         .subscribe( 
                 block => {
-                    console.log('xxxxxxxxxxxx Block-table-subj.component subscribe next: ' + block);  
                     this.localBlocks.push( block );
                 },
                 error => {
                     console.log('xxxxxxxxxxxx Block-table-subj.component subscribe ERROR: ' + error);  
                 },
                 () => {
-                    console.log( 'xxxxxxxxxxxxxxx=> tBlock-table-subj onComplete: ' + this.blocks.length );
                     this._ngZone.run(() => {
                       this.blocks = this.localBlocks;
                     } );
@@ -82,14 +80,12 @@ export class BlockTableSubjComponent implements OnInit, OnDestroy {
         this.localBlocks = [];
         this.subSubject = this.blockService.blocksAnnounced$.subscribe( 
                 block => {
-                    console.log('xxxxxxxxxxxx Block-table-subj.component subscribe next: ' + block);  
                     this.localBlocks.push( block );
                 },
                 error => {
                     console.log('xxxxxxxxxxxx Block-table-subj.component subscribe ERROR: ' + error);  
                 },
                 () => {
-                    console.log( 'xxxxxxxxxxxxxxx=> tBlock-table-subj onComplete: ' + this.blocks.length );
                     this._ngZone.run(() => {
                       this.blocks = this.localBlocks;
                     } );
