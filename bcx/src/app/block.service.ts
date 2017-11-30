@@ -29,7 +29,8 @@ import { Observer } from "rxjs/Observer";
 // import { just } from 'rxjs/observable/just';
 
 
-const web3 = new Web3( new Web3.providers.HttpProvider( 'http://localhost:9595' ) );
+//const web3 = new Web3( new Web3.providers.HttpProvider( 'http://localhost:9595' ) );
+const web3 = new Web3( new Web3.providers.WebsocketProvider( 'ws://localhost:9595' ) );
 
 
 @Injectable()
@@ -67,13 +68,30 @@ export class BlockServiceTs implements OnDestroy {
     }
 
     getBlock( id: number ): Observable<Block> {
-        // Todo: send the message _after_ fetching the block
-        //        console.log('BLOCKS size = ' + this.BLOCKS.length);
-        //        console.log('BLOCKS = ' + JSON.stringify(this.BLOCKS));
-        //        console.log('BLOCK id = ' + id);
-        //        console.log('block = ' + this.BLOCKS.find(blk => blk.id === id));
-        this.messageService.add( `BlockService: fetched block id=${id}` );
-        return of( this.BLOCKS.find( blk => blk.id === id ) );
+        const obs$ = Observable.create( observer => {
+            this.messageService.add( `BlockService: fetched block id=${id}` );
+            return web3.eth.getBlock( id ).then( z => {
+                const parsedObj = JSON.parse( JSON.stringify( z ) );
+                let blck = {
+                    id: parsedObj.number,
+                    miner: parsedObj.miner,
+                    difficulty: parsedObj.difficulty,
+                    gasLimit: parsedObj.gasLimit,
+                    gasUsed: parsedObj.gasUsed,
+                    hash: parsedObj.hash,
+                    nonce: parsedObj.nonce,
+                    size: parsedObj.size,
+                    timestamp: parsedObj.timestamp,
+                    totalDifficulty: parsedObj.totalDifficulty,
+                    transactions: parsedObj.transactions
+                };
+                observer.next( blck );
+                observer.complete();
+            } );
+
+        } );
+
+        return obs$;
     }
 
 
@@ -84,44 +102,44 @@ export class BlockServiceTs implements OnDestroy {
             const localBlocks = [];
             let blk: object;
             let parsedObj;
-    
+
             for ( let i = 0; i < numberOfBlocks; i++ )
             {
-                        web3.eth.getBlockNumber().then( x => {
-                            const blkNum = x - i;
-//                            console.log( 'Fetched block: ' + blkNum );
-                            return web3.eth.getBlock( blkNum ).then( z => {
-                                blk = z;
-                                parsedObj = JSON.parse( JSON.stringify( blk ) );
-                                // console.log("string = " + JSON.stringify(blk));
-//                                console.log( 'number = ' + parsedObj.number );
-                                // console.log("miner = " + parsedObj.miner);
-            
-                                let blck = {
-                                    id: parsedObj.number,
-                                    miner: parsedObj.miner,
-                                    difficulty: parsedObj.difficulty,
-                                    gasLimit: parsedObj.gasLimit,
-                                    gasUsed: parsedObj.gasUsed,
-                                    hash: parsedObj.hash,
-                                    nonce: parsedObj.nonce,
-                                    size: parsedObj.size,
-                                    timestamp: parsedObj.timestamp,
-                                    totalDifficulty: parsedObj.totalDifficulty,
-                                    transactions: parsedObj.transactions
-                                };
-                                localBlocks.push( blck );
-//                                observer.next(blck);
-            
-                                this.blocksSource.next( blck );
-            
-                            });
-                        });
-    
-    
+                web3.eth.getBlockNumber().then( x => {
+                    const blkNum = x - i;
+                    //                            console.log( 'Fetched block: ' + blkNum );
+                    return web3.eth.getBlock( blkNum ).then( z => {
+                        blk = z;
+                        parsedObj = JSON.parse( JSON.stringify( blk ) );
+                        // console.log("string = " + JSON.stringify(blk));
+                        //                                console.log( 'number = ' + parsedObj.number );
+                        // console.log("miner = " + parsedObj.miner);
+
+                        let blck = {
+                            id: parsedObj.number,
+                            miner: parsedObj.miner,
+                            difficulty: parsedObj.difficulty,
+                            gasLimit: parsedObj.gasLimit,
+                            gasUsed: parsedObj.gasUsed,
+                            hash: parsedObj.hash,
+                            nonce: parsedObj.nonce,
+                            size: parsedObj.size,
+                            timestamp: parsedObj.timestamp,
+                            totalDifficulty: parsedObj.totalDifficulty,
+                            transactions: parsedObj.transactions
+                        };
+                        localBlocks.push( blck );
+                        //                                observer.next(blck);
+
+                        this.blocksSource.next( blck );
+
+                    } );
+                } );
+
+
                 //            blk = web3.eth.getBlock( web3.eth.getBlockNumber().then(x => x)  );
                 //            console.log( 'Fetched block: ' + ( web3.eth.getBlockNumber() - i ) );
-    
+
                 /*            parsedObj = JSON.parse( JSON.stringify( blk ) );
                             // console.log("string = " + JSON.stringify(blk));
                             console.log( 'number = ' + parsedObj.number );
@@ -149,76 +167,93 @@ export class BlockServiceTs implements OnDestroy {
                 //          this.BLOCKS.push({ id: (web3.eth.blockNumber - i), name: ('blk #' + i)});
                 //          });
             }
-    
-            observer.next(localBlocks);
-            observer.complete();
-        });
-        
-    
-    return obs$;
 
-//        return of( localBlocks );
+            observer.next( localBlocks );
+            observer.complete();
+        } );
+
+        return obs$;
+
+        //        return of( localBlocks );
 
     }
 
 
-    fetchBlocks( numberOfBlocks: number ): Block[] {
+    fetchBlocks( numberOfBlocks: number ): Observable<Block[]> {
 
-        const localBlocks = [];
-        let blk: object;
-        let parsedObj;
+        const obs$ = Observable.create( observer => {
 
-        for ( let i = 0; i < numberOfBlocks; i++ )
-        {
+            let blk: object;
+            let parsedObj;
+
+
+            //            for ( let i = 0; i < numberOfBlocks; i++ )
+            //            {
 
             web3.eth.getBlockNumber().then( x => {
-                const blkNum = x - i;
-                console.log( 'Fetched block: ' + blkNum );
-                return web3.eth.getBlock( blkNum ).then( z => {
-                    blk = z;
-                    parsedObj = JSON.parse( JSON.stringify( blk ) );
-                    // console.log("string = " + JSON.stringify(blk));
-                    console.log( 'number = ' + parsedObj.number );
-                    localBlocks.push( {
-                        id: parsedObj.number,
-                        miner: parsedObj.miner,
-                        difficulty: parsedObj.difficulty,
-                        gasLimit: parsedObj.gasLimit,
-                        gasUsed: parsedObj.gasUsed,
-                        hash: parsedObj.hash,
-                        nonce: parsedObj.nonce,
-                        size: parsedObj.size,
-                        timestamp: parsedObj.timestamp,
-                        totalDifficulty: parsedObj.totalDifficulty,
-                        transactions: parsedObj.transactions
+                const localBlocks = [];
+                const cnt$ = interval( 1 ).scan( x => x + 1 ).takeWhile( x => x < numberOfBlocks ); // web3.eth.blockNumber );
+                cnt$.map(
+                    i => {
+                        const blkNum = x - i;
+                        console.log( 'Fetched block: ' + blkNum );
+                        return web3.eth.getBlock( blkNum ).then( z => {
+                            blk = z;
+                            parsedObj = JSON.parse( JSON.stringify( blk ) );
+                            // console.log("string = " + JSON.stringify(blk));
+                            console.log( 'localBlocks.length = ' + localBlocks.length );
+                            let blck = {
+                                id: parsedObj.number,
+                                miner: parsedObj.miner,
+                                difficulty: parsedObj.difficulty,
+                                gasLimit: parsedObj.gasLimit,
+                                gasUsed: parsedObj.gasUsed,
+                                hash: parsedObj.hash,
+                                nonce: parsedObj.nonce,
+                                size: parsedObj.size,
+                                timestamp: parsedObj.timestamp,
+                                totalDifficulty: parsedObj.totalDifficulty,
+                                transactions: parsedObj.transactions
+                            };
+                            localBlocks.push( blck );
+                            //                            this.BLOCKS.push( blck );
+                        } );
+                    }
+                )
+                    .subscribe( lbs => {
+                        observer.next( localBlocks );
+                        console.log( 'localBlocks:  = ' + localBlocks.length );
                     } );
 
-                } );
-            } );
 
-
-/*                blk = web3.eth.getBlock( web3.eth.blockNumber - i );
-                console.log( 'Fetched block: ' + ( web3.eth.blockNumber - i ) );
-    
-                parsedObj = JSON.parse( JSON.stringify( blk ) );
-                // console.log("string = " + JSON.stringify(blk));
-                console.log( 'number = ' + parsedObj.number );
-                localBlocks.push( {
-                    id: parsedObj.number,
-                    miner: parsedObj.miner,
-                    difficulty: parsedObj.difficulty,
-                    gasLimit: parsedObj.gasLimit,
-                    gasUsed: parsedObj.gasUsed,
-                    hash: parsedObj.hash,
-                    nonce: parsedObj.nonce,
-                    size: parsedObj.size,
-                    timestamp: parsedObj.timestamp,
-                    totalDifficulty: parsedObj.totalDifficulty,
-                    transactions: parsedObj.transactions
-                } );
-*/            }
-        this.BLOCKS = localBlocks;
-        return localBlocks;
+                /*                blk = web3.eth.getBlock( web3.eth.blockNumber - i );//
+                                console.log( 'Fetched block: ' + ( web3.eth.blockNumber - i ) );
+                    
+                                parsedObj = JSON.parse( JSON.stringify( blk ) );
+                                // console.log("string = " + JSON.stringify(blk));
+                                console.log( 'number = ' + parsedObj.number );
+                                localBlocks.push( {
+                                    id: parsedObj.number,
+                                    miner: parsedObj.miner,
+                                    difficulty: parsedObj.difficulty,
+                                    gasLimit: parsedObj.gasLimit,
+                                    gasUsed: parsedObj.gasUsed,
+                                    hash: parsedObj.hash,
+                                    nonce: parsedObj.nonce,
+                                    size: parsedObj.size,
+                                    timestamp: parsedObj.timestamp,
+                                    totalDifficulty: parsedObj.totalDifficulty,
+                                    transactions: parsedObj.transactions
+                                } );
+                */
+                //                }
+            },
+                error => {// d
+                    console.log( 'observer ERROR!!! ' + error );
+                }
+            );
+        } );
+        return obs$;
     }
 
     /*    getBlocksStream(): Observable<Block[]> {
@@ -236,13 +271,20 @@ export class BlockServiceTs implements OnDestroy {
         }
     */
 
-    getBlocks(): Observable<Block[]> {
-        let localBlocks = [];
-        localBlocks = this.fetchBlocks( 10 );
-        //      this.BLOCKS = localB        
-        console.log( 'localBlocks getBlocks = ' + localBlocks.length );
+    getBlocks( number ): Observable<Block[]> {
+        const obs$ = Observable.create( observer => {
 
-        return of( localBlocks );
+            observer.next( this.fetchBlocks( number ) );
+            observer.complete();
+            //            .subscribe( x => {
+            //                console.log( 'localBlocks getBlocks = ' + x );
+            //                observer.next( x );
+            //            } );
+            //            observer.complete();
+            //      this.BLOCKS = localB        
+
+        } );
+        return obs$;
     }
 
     getTransactions( account ): Observable<Tx[]> {
@@ -932,35 +974,35 @@ export class BlockServiceTs implements OnDestroy {
             const cnt$ = interval( 0 ).scan( x => x + 1 ).takeWhile( x => x <= numberOfBlocks );
             cnt$.subscribe(
                 x => {
-                                web3.eth.getBlockNumber().then( k => {
-                                    const blkNum = k - x;
-                                    console.log( 'Fetched block: ' + blkNum );
-                                    return web3.eth.getBlock( blkNum ).then( z => {
-                                        blk = z;
-                                        parsedObj = JSON.parse( JSON.stringify( blk ) );
-                                        // console.log("string = " + JSON.stringify(blk));
-                                        console.log( 'number = ' + parsedObj.number );
-                                        // console.log("miner = " + parsedObj.miner);
-            
-                                        let blck = {
-                                            id: parsedObj.number,
-                                            miner: parsedObj.miner,
-                                            difficulty: parsedObj.difficulty,
-                                            gasLimit: parsedObj.gasLimit,
-                                            gasUsed: parsedObj.gasUsed,
-                                            hash: parsedObj.hash,
-                                            nonce: parsedObj.nonce,
-                                            size: parsedObj.size,
-                                            timestamp: parsedObj.timestamp,
-                                            totalDifficulty: parsedObj.totalDifficulty,
-                                            transactions: parsedObj.transactions
-                                        };
-                                        localBlocks.push( blck );
-            
-                                        this.blocksSource.next( blck );
-            
-                                    } );
-                                } );
+                    web3.eth.getBlockNumber().then( k => {
+                        const blkNum = k - x;
+                        console.log( 'Fetched block: ' + blkNum );
+                        return web3.eth.getBlock( blkNum ).then( z => {
+                            blk = z;
+                            parsedObj = JSON.parse( JSON.stringify( blk ) );
+                            // console.log("string = " + JSON.stringify(blk));
+                            console.log( 'number = ' + parsedObj.number );
+                            // console.log("miner = " + parsedObj.miner);
+
+                            let blck = {
+                                id: parsedObj.number,
+                                miner: parsedObj.miner,
+                                difficulty: parsedObj.difficulty,
+                                gasLimit: parsedObj.gasLimit,
+                                gasUsed: parsedObj.gasUsed,
+                                hash: parsedObj.hash,
+                                nonce: parsedObj.nonce,
+                                size: parsedObj.size,
+                                timestamp: parsedObj.timestamp,
+                                totalDifficulty: parsedObj.totalDifficulty,
+                                transactions: parsedObj.transactions
+                            };
+                            localBlocks.push( blck );
+
+                            this.blocksSource.next( blck );
+
+                        } );
+                    } );
 
                     //                    blk = web3.eth.getBlock( web3.eth.blockNumber - x );
                     //                    console.log( 'Fetched block: ' + ( web3.eth.blockNumber - x ) );
@@ -1001,31 +1043,33 @@ export class BlockServiceTs implements OnDestroy {
     }
 
     private socket: Subject<MessageEvent>;
-    public connect(url): Subject<MessageEvent> {
-      if(!this.socket) {
-        this.socket = this.create(url);
-      }
-      return this.socket;
+    public connect( url ): Subject<MessageEvent> {
+        if ( !this.socket )
+        {
+            this.socket = this.create( url );
+        }
+        return this.socket;
     }
 
-    private create(url): Subject<MessageEvent> {
-        let ws = new WebSocket(url);
+    private create( url ): Subject<MessageEvent> {
+        let ws = new WebSocket( url );
         let observable = Observable.create(
-            (obs: Observer<MessageEvent>) => {
-                ws.onmessage = obs.next.bind(obs);
-                ws.onerror = obs.error.bind(obs);
-                ws.onclose = obs.complete.bind(obs);
-                return ws.close.bind(ws);
+            ( obs: Observer<MessageEvent> ) => {
+                ws.onmessage = obs.next.bind( obs );
+                ws.onerror = obs.error.bind( obs );
+                ws.onclose = obs.complete.bind( obs );
+                return ws.close.bind( ws );
             }
         );
         let observer = {
-            next: (data: Object) => {
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify(data));
+            next: ( data: Object ) => {
+                if ( ws.readyState === WebSocket.OPEN )
+                {
+                    ws.send( JSON.stringify( data ) );
                 }
             },
         };
-        return Subject.create(observer, observable);
+        return Subject.create( observer, observable );
     }
-    
+
 }

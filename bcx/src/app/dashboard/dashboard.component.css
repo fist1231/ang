@@ -7,7 +7,7 @@
 	padding: 5px 5px 10px 20px;
 	height: 220px;
 }
-
+*/
 [class*='col-'] {
   float: left;
   padding-right: 20px;
@@ -72,4 +72,3 @@ h4 {
     min-width: 60px;
   }
 }
-*/
