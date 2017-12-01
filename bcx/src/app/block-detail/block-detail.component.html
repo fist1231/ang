@@ -1,190 +1,278 @@
-<div class="details" *ngIf="block$ | async as block; else loading">
+<div class="container">
+	<div class="card" *ngIf="block$ | async as block; else loading">
 
-	<h4>
-		Block:{{ block.id }} Details
-		<button (click)="goBack()" type="button" class="btn btn-primary">Back</button>
-	</h4>
-	<div class="divTable">
-		<div class="divRow">
-			<div class="divCell1"><span>id:</span></div>
-			<div class="divCell">{{block.id}}</div>
+		<div class="card-header">
+			<h4 class="text-center">
+				Block# {{ block.id }} <span>details</span>
+				<button (click)="goBack()" type="button" class="btn btn-primary float-right">Back</button>
+			</h4>
 		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Miner:</span></div>
-			<div class="divCell">{{block.miner}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Difficulty:</span></div>
-			<div class="divCell">{{block.difficulty}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Gas Limit:</span></div>
-			<div class="divCell">{{block.id}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Gas Used:</span></div>
-			<div class="divCell">{{block.gasUsed}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Hash:</span></div>
-			<div class="divCell">{{block.hash}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Nonce:</span></div>
-			<div class="divCell">{{block.nonce}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Size:</span></div>
-			<div class="divCell">{{block.size}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Timestamp:</span></div>
-			<div class="divCell">{{block.timestamp * 1000 | date : 'MM/dd/yyyy hh:mm:ss a' : timezone}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Total Difficulty:</span></div>
-			<div class="divCell">{{block.totalDifficulty}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Transactions:</span></div>
-			<div class="divCell">{{block.transactions}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Tx List:</span></div>
-			<div class="divCell"><a routerLink="/transactions">Transactions</a></div>
-		</div>
-				
-		
-	</div>
 
-
-
-	<button type="button" class="btn btn-info" 
-        (click)="openModal(template)">Create template modal</button>
-
-	<ng-template #template>
-	    <div class="modal-header">
-	        <h4 class="modal-title pull-left">Block Details</h4>
-	        <button type="button" class="close pull-right" 
-	                aria-label="Close" (click)="modalRef.hide()">
-	      			<span aria-hidden="true">&times;</span>
-	   		 </button>
-	    </div>
-	    <div class="modal-body">
-			<div class="divTable">
-				<div class="divRow">
-					<div class="divCell1"><span>id:</span></div>
-					<div class="divCell">{{block.id}}</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col-sm">
+					<span>id:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Miner:</span></div>
-					<div class="divCell">{{block.miner}}</div>
+				<div class="col-sm">{{block.id}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Miner:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Difficulty:</span></div>
-					<div class="divCell">{{block.difficulty}}</div>
+				<div class="col-sm">{{block.miner}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Difficulty:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Gas Limit:</span></div>
-					<div class="divCell">{{block.id}}</div>
+				<div class="col-sm">{{block.difficulty}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Gas Limit:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Gas Used:</span></div>
-					<div class="divCell">{{block.gasUsed}}</div>
+				<div class="col-sm">{{block.id}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Gas Used:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Hash:</span></div>
-					<div class="divCell">{{block.hash}}</div>
+				<div class="col-sm">{{block.gasUsed}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Hash:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Nonce:</span></div>
-					<div class="divCell">{{block.nonce}}</div>
+				<div class="col-sm">{{block.hash}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Nonce:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Size:</span></div>
-					<div class="divCell">{{block.size}}</div>
+				<div class="col-sm">{{block.nonce}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Size:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Timestamp:</span></div>
-					<div class="divCell">{{block.timestamp * 1000 | date : 'MM/dd/yyyy hh:mm:ss a' : timezone}}</div>
+				<div class="col-sm">{{block.size}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Timestamp:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Total Difficulty:</span></div>
-					<div class="divCell">{{block.totalDifficulty}}</div>
+				<div class="col-sm">{{block.timestamp * 1000 | date :
+					'MM/dd/yyyy hh:mm:ss a' : timezone}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Total Difficulty:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Transactions:</span></div>
-					<div class="divCell">{{block.transactions}}</div>
+				<div class="col-sm">{{block.totalDifficulty}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Transactions:</span>
 				</div>
-				<div class="divRow">
-					<div class="divCell1"><span>Tx List:</span></div>
-					<div class="divCell"><a routerLink="/transactions">Transactions</a></div>
+				<div class="col-sm">{{block.transactions}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Tx List:</span>
+				</div>
+				<div class="col-sm">
+					<a routerLink="/transactions">Transactions</a>
 				</div>
 			</div>
 		</div>
-	</ng-template>
 
+		<button type="button" class="btn btn-info"
+			(click)="openModal(template)">Create template modal</button>
+
+
+		<ng-template #template>
+		<div class="card" style="width: 750px;">
+			<div class="card-header justify-content-md-center align-items-center">
+				<h4>Block Details
+				<button type="button" class="close pull-right" aria-label="Close"
+					(click)="modalRef.hide()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				</h4>
+			</div>
+
+			<div class="card-body">
+				<div class="row">
+					<div class="col-2">
+						<span>id:</span>
+					</div>
+					<div class="col-sm">{{block.id}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Miner:</span>
+					</div>
+					<div class="col-sm">{{block.miner}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Difficulty:</span>
+					</div>
+					<div class="col-sm">{{block.difficulty}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Gas Limit:</span>
+					</div>
+					<div class="col-sm">{{block.id}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Gas Used:</span>
+					</div>
+					<div class="col-sm">{{block.gasUsed}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Hash:</span>
+					</div>
+					<div class="col-lg">{{block.hash}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Nonce:</span>
+					</div>
+					<div class="col-sm">{{block.nonce}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Size:</span>
+					</div>
+					<div class="col-sm">{{block.size}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Timestamp:</span>
+					</div>
+					<div class="col-sm">{{block.timestamp * 1000 | date :
+						'MM/dd/yyyy hh:mm:ss a' : timezone}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Total Difficulty:</span>
+					</div>
+					<div class="col-sm">{{block.totalDifficulty}}</div>
+				</div>
+				<div class="row">
+					<div class="col-3">
+						<span>Transactions:</span>
+					</div>
+					<div class="col-sm">{{block.transactions}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Tx List:</span>
+					</div>
+					<div class="col-sm">
+						<a routerLink="/transactions">Transactions</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		</ng-template>
+
+
+	</div>
 
 </div>
 
 
-<div class="details" *ngIf="block; else loading">
 
-	<h4>
-		Block:{{ block.id }} Details
-		<button (click)="goBack()" type="button" class="btn btn-primary">Back</button>
-	</h4>
-	<div class="divTable">
-		<div class="divRow">
-			<div class="divCell1"><span>id:</span></div>
-			<div class="divCell">{{block.id}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Miner:</span></div>
-			<div class="divCell">{{block.miner}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Difficulty:</span></div>
-			<div class="divCell">{{block.difficulty}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Gas Limit:</span></div>
-			<div class="divCell">{{block.id}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Gas Used:</span></div>
-			<div class="divCell">{{block.gasUsed}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Hash:</span></div>
-			<div class="divCell">{{block.hash}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Nonce:</span></div>
-			<div class="divCell">{{block.nonce}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Size:</span></div>
-			<div class="divCell">{{block.size}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Timestamp:</span></div>
-			<div class="divCell">{{block.timestamp * 1000 | date : 'MM/dd/yyyy hh:mm:ss a' : timezone}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Total Difficulty:</span></div>
-			<div class="divCell">{{block.totalDifficulty}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Transactions:</span></div>
-			<div class="divCell">{{block.transactions}}</div>
-		</div>
-		<div class="divRow">
-			<div class="divCell1"><span>Tx List:</span></div>
-			<div class="divCell"><a routerLink="/transactions">Transactions</a></div>
-		</div>
-				
-		
+
+
+<div class="card content-fluid w-100" *ngIf="block; else loading">
+	<div class="card-header justify-content-md-center align-items-center">
+		<h4 class="">
+			Block:{{ block.id }} preview
+			<button (click)="goBack()" type="button" class="btn btn-primary">Back</button>
+		</h4>
 	</div>
 
+	<div class="card-body">
+		<div class="row">
+			<div class="col-2">
+				<span>id:</span>
+			</div>
+			<div class="col">{{block.id}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Miner:</span>
+			</div>
+			<div class="col">{{block.miner}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Difficulty:</span>
+			</div>
+			<div class="col">{{block.difficulty}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Gas Limit:</span>
+			</div>
+			<div class="col">{{block.id}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Gas Used:</span>
+			</div>
+			<div class="col">{{block.gasUsed}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Hash:</span>
+			</div>
+			<div class="col">{{block.hash}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Nonce:</span>
+			</div>
+			<div class="col-sm">{{block.nonce}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Size:</span>
+			</div>
+			<div class="col">{{block.size}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Timestamp:</span>
+			</div>
+			<div class="col">{{block.timestamp * 1000 | date : 'MM/dd/yyyy
+				hh:mm:ss a' : timezone}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Total Difficulty:</span>
+			</div>
+			<div class="col">{{block.totalDifficulty}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Transactions:</span>
+			</div>
+			<div class="col">{{block.transactions}}</div>
+		</div>
+		<div class="row">
+			<div class="col-2">
+				<span>Tx List:</span>
+			</div>
+			<div class="col">
+				<a routerLink="/transactions">Transactions</a>
+			</div>
+		</div>
+	</div>
 </div>

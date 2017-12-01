@@ -1,46 +1,55 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-  <a class="navbar-brand" href="#" target="_blank">Block-Chain-eXplorer</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<div class="container-fluid mt-5">
+	<div class="row">
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+			<a class="navbar-brand" href="#" target="_blank">{{title}}</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarsExampleDefault"
+				aria-controls="navbarsExampleDefault" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-      	<a class="nav-link" routerLink="/dashboard">Dashboard</a>
-      </li>
-      <li class="nav-item">
-      	<a class="nav-link" routerLink="/blocks">Blocks</a>
-      </li>
-      <li class="nav-item">
-      	<a class="nav-link" routerLink="/blockTable">Table</a>
-      </li>
-      <li class="nav-item">
-      	<a class="nav-link" routerLink="/blockTableSubj">Table-2</a>
-      </li>
-      <li class="nav-item dropdown" ngbDropdown>
-        <span class="nav-link dropdown-toggle mhand" id="dropdown01" ngbDropdownToggle>Tables</span>
-        <div class="dropdown-menu" aria-labelledby="dropdown01" ngbDropdownMenu>
-	        <a class="dropdown-item" routerLink="/blockTable">Blocks Table</a>
-	        <a class="dropdown-item" routerLink="/blockTableSubj">Blocks Table 2</a>
-	        <a class="dropdown-item" routerLink="/blockTable">TX Table</a>
-	        <a class="dropdown-item" routerLink="/blockTable">Acct Table</a>
-	        <div class="dropdown-divider"></div>
-	        <a class="dropdown-item" routerLink="/blockTable">Contracts Table</a>
-	        <div class="dropdown-divider"></div>
-	        <a class="dropdown-item disabled" routerLink="/blockTable">Houses Table</a>
-        </div>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
+			<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link"
+						routerLink="/dashboard">Dashboard</a></li>
+					<li class="nav-item"><a class="nav-link" routerLink="/blocks">Blocks</a>
+					</li>
+					<li class="nav-item"><a class="nav-link"
+						routerLink="/blockTable">Table</a></li>
+					<li class="nav-item"><a class="nav-link"
+						routerLink="/blockTableSubj">Table-2</a></li>
+					<li class="nav-item dropdown" ngbDropdown><span
+						class="nav-link dropdown-toggle mhand" id="dropdown01"
+						ngbDropdownToggle>Tables</span>
+						<div class="dropdown-menu" aria-labelledby="dropdown01"
+							ngbDropdownMenu>
+							<a class="dropdown-item" routerLink="/blockTable">Blocks
+								Table</a> <a class="dropdown-item" routerLink="/blockTableSubj">Blocks
+								Table 2</a> <a class="dropdown-item" routerLink="/blockTable">TX
+								Table</a> <a class="dropdown-item" routerLink="/blockTable">Acct
+								Table</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" routerLink="/blockTable">Contracts
+								Table</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item disabled" routerLink="/blockTable">Houses
+								Table</a>
+						</div></li>
+				</ul>
+				<form class="form-inline my-2 my-lg-0">
+					<input class="form-control mr-sm-2" type="text"
+						placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				</form>
+			</div>
+		</nav>
+	</div>
 
-<div class="center">
-	<h1 class="center">{{title}}</h1>
-	<router-outlet></router-outlet>
-	<app-messages></app-messages>
+	<div class="mt-3">
+		<router-outlet></router-outlet>
+	</div>
+	<div class="mt-3 border content">
+		<app-messages></app-messages>
+	</div>
 </div>

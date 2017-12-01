@@ -8,6 +8,7 @@
 	height: 220px;
 }
 */
+
 [class*='col-'] {
   float: left;
   padding-right: 20px;
@@ -71,22 +72,5 @@ h4 {
   position:relative;
     min-width: 60px;
   }
-}
-
-.accts {
- 	text-align: left;
- 	border: 0px dotted;
- 	margin-left: 10px;
- 	width: 100%;
- 	margin-bottom: 50px;
- 	margin-top: 10px;
-}
-
-.accts td {
- 	text-align: left;
- 	border: 1px dotted;
- 	margin-left: 10px;
- 	padding: 10px 10px 10px 10px;
- 	margin: 20px 20px 20px 20px;
 }
 

@@ -1,9 +1,10 @@
-import { Component, OnInit, OnDestroy, Input, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, NgZone, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Block } from '../block';
 import { BlockServiceTs } from '../block.service';
 import Web3 from 'web3';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { fromEvent } from 'rxjs/observable/fromEvent';
 
 //const web3 = new Web3( new Web3.providers.HttpProvider( 'http://localhost:9595' ) );
 const web3 = new Web3( Web3.givenProvider || "ws://localhost:9595" );
@@ -11,7 +12,8 @@ const web3 = new Web3( Web3.givenProvider || "ws://localhost:9595" );
 @Component( {
     selector: 'app-blocks',
     templateUrl: './blocks.component.html',
-    styleUrls: ['./blocks.component.css']
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrls: ['./blocks.component.css'],
 } )
 
 
@@ -24,13 +26,17 @@ export class BlocksComponent implements OnInit, OnDestroy {
 
     selectedBlock: Block;
     subscription;
+    blocS: string = "here we go ...";
+    clicks$: Observable<any>;
+    @ViewChild('bttn') button;
 
     //    filtr = web3.eth.filter('latest');
     //    filtr = web3.eth.subscribe('latest');
 
-    constructor( private blockService: BlockServiceTs, private _ngZone: NgZone ) { }
+    constructor( private blockService: BlockServiceTs, private _ngZone: NgZone, private cd: ChangeDetectorRef ) { }
 
     ngOnInit() {
+        this.listenClicks();
         console.log( 'OnInit' );
         this.getBlocks();
         this.watchBlockHeaders();
@@ -77,11 +83,23 @@ export class BlocksComponent implements OnInit, OnDestroy {
             .map( x => x.sort(( a, b ) => {
                 return a < b ? -1 : 1;
             } ) )
-            .subscribe( x => {
-                this._ngZone.run(() => {
-                    this.blocks = x;
-                } );
-            } );
+            .subscribe( 
+                    x => {
+                        console.log( '0000 getBlocks next ' + this.blocks.length );
+                        this._ngZone.run(() => {
+                            this.blocks = x;
+                        })
+                    },
+                    error => {
+                        console.log( 'getBlocks Error: ' + error );
+                    },
+                    () => {
+//                        console.log( '0000 getBlocks complete: blocks.length  = ' + this.blocks.length );
+                        this._ngZone.run(() => {
+                            this.cd.markForCheck();
+                        })
+                    }
+                );
     }
 
     //    watchBlocks(): Observable<Block[]> {
@@ -108,5 +126,27 @@ export class BlocksComponent implements OnInit, OnDestroy {
 
     onSelect( block: Block ): void {
         this.selectedBlock = block;
+        this.blocS = block.id.toString();
+    }
+    
+    goChange() {
+        this.blocS = "changed now";
+    }
+
+    listenClicks() {
+        
+        let i=0;
+        
+        this.clicks$ = fromEvent(this.button.nativeElement, 'click');
+        
+        this.clicks$.subscribe(clk => {
+            i++;
+            console.log('clicked: ' + clk);
+            console.log('from event click: ' + i);
+            this.blocS = "from event click: " + i;
+            this.cd.markForCheck();
+        }
+        );
+        
     }
 }

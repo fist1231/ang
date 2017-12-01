@@ -14,3 +14,7 @@
   background-color: #ffffff;
 }
 */
+
+table.t1 tbody th, table.t1 tbody td {
+    padding: 1px 1px; 
+}

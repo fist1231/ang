@@ -1,9 +1,18 @@
-<div class="messages" *ngIf="messageService.messages.length">
+<div class="container">
+<div class="border" *ngIf="messageService.messages.length">
+	<div class="card">
+		<div class="card-header">
+			<h3 class="text-center">
+				Messages
+				<button type="button" class="btn btn-primary float-right"
+					(click)="messageService.clear()">Clear</button>
+			</h3>
+		</div>
 
-  <h4>
-  	Messages
-  	<button type="button" class="btn btn-primary" (click)="messageService.clear()">Clear</button>
-  </h4>
-  <div class="message" *ngFor='let message of messageService.messages'> <label style="font-size: small;"><i>{{message}}</i></label> </div>
+		<div class="" *ngFor='let message of messageService.messages'>
+			<label style="font-size: small;"><i>{{message}}</i></label>
+		</div>
 
+	</div>
+</div>
 </div>
