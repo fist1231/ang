@@ -25,6 +25,8 @@
 				</div>
 Fun with change detection: [{{blocS}}]
 <button #bttn type="button" class="btn btn-primary float-right">Trigger</button>
+<input [(ngModel)]="blocS">
+<p> Hello {{blocS}}</p>
 				<div class="col">
 					<div *ngIf="selectedBlock">
 						<app-block-preview [block]="selectedBlock"></app-block-preview>
