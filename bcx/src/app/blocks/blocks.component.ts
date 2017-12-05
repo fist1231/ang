@@ -5,9 +5,11 @@ import Web3 from 'web3';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { fromEvent } from 'rxjs/observable/fromEvent';
+import { Subject } from "rxjs/Subject";
 
 //const web3 = new Web3( new Web3.providers.HttpProvider( 'http://localhost:9595' ) );
 const web3 = new Web3( Web3.givenProvider || "ws://localhost:9595" );
+
 
 @Component( {
     selector: 'app-blocks',
@@ -30,6 +32,9 @@ export class BlocksComponent implements OnInit, OnDestroy {
     clicks$: Observable<any>;
     @ViewChild('bttn') button;
 
+    private clicksFrom2 = new Subject<string>();
+    
+    
     //    filtr = web3.eth.filter('latest');
     //    filtr = web3.eth.subscribe('latest');
 
@@ -37,6 +42,8 @@ export class BlocksComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.listenClicks();
+        this.listenClicks2();
+        
         console.log( 'OnInit' );
         this.getBlocks();
         this.watchBlockHeaders();
@@ -149,4 +156,21 @@ export class BlocksComponent implements OnInit, OnDestroy {
         );
         
     }
+    
+    click2() {
+        this.clicksFrom2.next('clicked');
+    }
+    
+    listenClicks2() {
+        let i=0;
+        this.clicksFrom2.subscribe(clk => {
+            i++;
+            console.log('clicked: ' + clk);
+            console.log('from event click: ' + i);
+            this.blocS = "from event click: " + i;
+            this.cd.markForCheck();
+        }
+        );
+    }
+    
 }

@@ -16,23 +16,38 @@
 						</thead>
 						<tbody>
 							<tr *ngFor="let block of blocks;let index = index;">
-								<td class="badge p-2 m-1"><a routerLink="/detail/{{block.id}}"
+								<td class="badge p-2 m-1"><a
+									routerLink="/detail/{{block.id}}"
 									(mouseenter)="onSelect(block)">{{block.id}}</a></td>
 								<td class="p-2 m-1">{{block.miner}}</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
-Fun with change detection: [{{blocS}}]
-<button #bttn type="button" class="btn btn-primary float-right">Trigger</button>
-<input [(ngModel)]="blocS">
-<p> Hello {{blocS}}</p>
+				Fun with change detection: [{{blocS}}]
+				<button #bttn type="button" class="btn btn-primary float-right">Trigger</button>
+				<input [(ngModel)]="blocS">
+				<p>Hello {{blocS}}</p>
 				<div class="col">
 					<div *ngIf="selectedBlock">
 						<app-block-preview [block]="selectedBlock"></app-block-preview>
 					</div>
 
 				</div>
+
+				<hr/>
+
+				Fun with change detection-2: [{{blocS}}]
+				<button #bttn2 type="button" class="btn btn-primary float-right" (click)="click2()">Trigger-2</button>
+				<input [(ngModel)]="blocS">
+				<p>Hello {{blocS}}</p>
+				<div class="col">
+					<div *ngIf="selectedBlock">
+						<app-block-preview [block]="selectedBlock"></app-block-preview>
+					</div>
+
+				</div>
+				
 			</div>
 		</div>
 	</div>

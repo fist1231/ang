@@ -1,3 +1,86 @@
-<p>
-  user-details works!
-</p>
+<div class="container">
+<button (click)="goBack()" type="button" class="btn btn-primary float-right">Back</button>
+	<div class="card" *ngIf="user$ | async as user; else loading">
+
+		<div class="card-header">
+			<h4 class="text-center">
+				User id: {{ user.id }} <span>details</span>
+				
+			</h4>
+		</div>
+
+		<div class="card-body">
+			<div class="row">
+				<div class="col-sm">
+					<span>id:</span>
+				</div>
+				<div class="col-sm">{{user.id}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Name:</span>
+				</div>
+				<div class="col-sm">{{user.name}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Status:</span>
+				</div>
+				<div class="col-sm">{{user.status}}</div>
+			</div>
+			<div class="row">
+				<div class="col-sm">
+					<span>Date:</span>
+				</div>
+				<div class="col-sm">{{user.created_date}}</div>
+			</div>
+		</div>
+
+		<button type="button" class="btn btn-info"
+			(click)="openModal(template)">Create template modal</button>
+
+
+		<ng-template #template>
+		<div class="card" style="width: 750px;">
+			<div class="card-header justify-content-md-center align-items-center">
+				<h4>user Details
+				<button type="button" class="close pull-right" aria-label="Close"
+					(click)="modalRef.hide()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				</h4>
+			</div>
+
+			<div class="card-body">
+				<div class="row">
+					<div class="col-2">
+						<span>id:</span>
+					</div>
+					<div class="col-sm">{{user.id}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Miner:</span>
+					</div>
+					<div class="col-sm">{{user.name}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Difficulty:</span>
+					</div>
+					<div class="col-sm">{{user.status}}</div>
+				</div>
+				<div class="row">
+					<div class="col-2">
+						<span>Gas Limit:</span>
+					</div>
+					<div class="col-sm">{{user.created_date}}</div>
+				</div>
+			</div>
+		</div>
+		</ng-template>
+
+
+	</div>
+
+</div>

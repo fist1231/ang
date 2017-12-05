@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, TemplateRef } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/debounceTime';
@@ -8,6 +8,7 @@ import { ActivatedRoute } from "@angular/router";
 import { UsersService } from '../users.service';
 import { Subject } from "rxjs/Subject";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
+import {BsModalRef, BsModalService} from 'ngx-bootstrap/modal';
 
 
 
@@ -26,8 +27,10 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     users$: Observable<User[]>;
     usrs$;
     private searchTerms = new Subject<string>();
+    public modalRef: BsModalRef;
+    user$: Observable<User>;
 
-    constructor( private route: ActivatedRoute, private usersService: UsersService ) { }
+    constructor( private route: ActivatedRoute, private usersService: UsersService, private modalService: BsModalService ) { }
 
     ngOnInit() {
 //        this.getUsers();
@@ -75,4 +78,16 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
               );
 */
     }
+    
+    getUser() {
+        this.usersService.getUser(Number('1'));
+    }
+    
+    
+    public openModal(template: TemplateRef<any>) {
+        this.getUser();
+        this.modalRef = this.modalService.show(template, {user: this.user$});
+    }
+    
+    
 }

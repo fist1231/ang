@@ -65,16 +65,18 @@ export class UsersService implements OnInit, OnDestroy {
                 }
         return this.http.get<User[]>( this.searchUrl + `/${term}` ).pipe(
             tap( _ => this.log( `found users matching "${term}"` ) ),
-            catchError( this.handleError<User[]>( 'searchUsers', [] ) )
+            catchError( this.handleError<any>( 'searchUsers', [] ) )
         );
     }
 
 
     getUser( id: number ): Observable<User> {
+        console.log('number = ' + id);
         const url = `${this.usersUrl}/${id}`;
+        console.log('url = ' + url);
         return this.http.get<User>( url ).pipe(
             tap( _ => this.log( `fetched user id=${id}` ) ),
-            catchError( this.handleError<User>( `getUser id=${id}` ) )
+            catchError( this.handleError<any>( `getUser id=${id}` ) )
         );
     }
 
@@ -88,7 +90,7 @@ export class UsersService implements OnInit, OnDestroy {
     addUser( user: User ): Observable<User> {
         return this.http.post<User>( this.usersUrl, user, httpOptions ).pipe(
             tap(( user: User ) => this.log( `added user w/ id=${user.id}` ) ),
-            catchError( this.handleError<User>( 'addUser' ) )
+            catchError( this.handleError<any>( 'addUser' ) )
         );
     }
 

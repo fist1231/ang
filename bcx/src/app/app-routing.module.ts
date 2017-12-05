@@ -10,6 +10,8 @@ import {BlockTableComponent} from './block-table/block-table.component';
 import {BlockTableSubjComponent} from './block-table-subj/block-table-subj.component';
 import {UsersComponent} from './users/users.component';
 import {UsersResolver} from './users/users.resolver';
+import {UserDetailsComponent} from './user-details/user-details.component';
+import {UserDetailsResolver} from './user-details/user-details.resolver';
 
 
 const routes: Routes = [
@@ -41,6 +43,13 @@ const routes: Routes = [
             users: UsersResolver
         }
     },
+    {
+        path: 'user/:id',
+        component: UserDetailsComponent,
+        resolve: {
+            userDetails: UserDetailsResolver
+        }
+    }
 
 ];
 

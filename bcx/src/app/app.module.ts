@@ -27,12 +27,14 @@ import {TooltipModule} from 'ngx-bootstrap/tooltip';
 import {ModalModule} from 'ngx-bootstrap/modal';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import { BlockTableSubjComponent } from './block-table-subj/block-table-subj.component';
-import { UsersComponent } from './users/users.component';
-import { UsersResolver } from './users/users.resolver';
-import { UsersService } from './users.service';
-import { UserDetailsComponent } from './user-details/user-details.component';
-import { AddUserComponent } from './add-user/add-user.component';
+import {BlockTableSubjComponent } from './block-table-subj/block-table-subj.component';
+import {UsersComponent } from './users/users.component';
+import {UsersResolver } from './users/users.resolver';
+import {UsersService } from './users.service';
+import {UserDetailsComponent } from './user-details/user-details.component';
+import {AddUserComponent } from './add-user/add-user.component';
+import {UserDetailsResolver} from './user-details/user-details.resolver';
+
 
 @NgModule({
     declarations: [
@@ -60,7 +62,7 @@ import { AddUserComponent } from './add-user/add-user.component';
         DataTablesModule.forRoot(),
         HttpClientModule
     ],
-    providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver, UsersResolver, UsersService],
+    providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver, UsersResolver, UsersService, UserDetailsResolver],
     bootstrap: [AppComponent],
 //    exports: [BsDropdownModule, TooltipModule, ModalModule]
 })
