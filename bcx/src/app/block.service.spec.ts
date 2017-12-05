@@ -1,15 +1,15 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { BlockService } from './block.service';
+import { BlockServiceTs } from './block.service';
 
 describe('BlockService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [BlockService]
+      providers: [BlockServiceTs]
     });
   });
 
-  it('should be created', inject([BlockService], (service: BlockService) => {
+  it('should be created', inject([BlockServiceTs], (service: BlockServiceTs) => {
     expect(service).toBeTruthy();
   }));
 });

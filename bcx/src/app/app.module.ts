@@ -1,7 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms'; // <-- NgModel lives here
-
+import {HttpClientModule} from '@angular/common/http';
 
 import {AppComponent} from './app.component';
 import {BlocksComponent} from './blocks/blocks.component';
@@ -28,6 +28,11 @@ import {ModalModule} from 'ngx-bootstrap/modal';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { BlockTableSubjComponent } from './block-table-subj/block-table-subj.component';
+import { UsersComponent } from './users/users.component';
+import { UsersResolver } from './users/users.resolver';
+import { UsersService } from './users.service';
+import { UserDetailsComponent } from './user-details/user-details.component';
+import { AddUserComponent } from './add-user/add-user.component';
 
 @NgModule({
     declarations: [
@@ -39,7 +44,10 @@ import { BlockTableSubjComponent } from './block-table-subj/block-table-subj.com
         DashboardComponent,
         TxListComponent,
         BlockTableComponent,
-        BlockTableSubjComponent
+        BlockTableSubjComponent,
+        UsersComponent,
+        UserDetailsComponent,
+        AddUserComponent
     ],
     imports: [
         BrowserModule,
@@ -49,9 +57,10 @@ import { BlockTableSubjComponent } from './block-table-subj/block-table-subj.com
         TooltipModule.forRoot(),
         ModalModule.forRoot(),
         NgbModule.forRoot(),
-        DataTablesModule.forRoot()
+        DataTablesModule.forRoot(),
+        HttpClientModule
     ],
-    providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver],
+    providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver, UsersResolver, UsersService],
     bootstrap: [AppComponent],
 //    exports: [BsDropdownModule, TooltipModule, ModalModule]
 })

@@ -8,6 +8,8 @@ import {TransactionResolver} from './tx-list/transaction.resolver';
 import {BlockDetailResolver} from './block-detail/block-detail.resolver';
 import {BlockTableComponent} from './block-table/block-table.component';
 import {BlockTableSubjComponent} from './block-table-subj/block-table-subj.component';
+import {UsersComponent} from './users/users.component';
+import {UsersResolver} from './users/users.resolver';
 
 
 const routes: Routes = [
@@ -28,11 +30,18 @@ const routes: Routes = [
         component: BlockDetailComponent,
         resolve: {
             blockDetail: BlockDetailResolver
-
         }
     },
     {path: 'blockTable', component: BlockTableComponent},
-    {path: 'blockTableSubj', component: BlockTableSubjComponent}
+    {path: 'blockTableSubj', component: BlockTableSubjComponent},
+    {
+        path: 'users', 
+        component: UsersComponent,
+        resolve: {
+            users: UsersResolver
+        }
+    },
+
 ];
 
 @NgModule({

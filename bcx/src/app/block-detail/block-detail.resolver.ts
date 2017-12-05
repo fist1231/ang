@@ -13,7 +13,6 @@ export class BlockDetailResolver implements Resolve<Observable<Block>> {
 
     }
 
-
     resolve(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<Block> {
