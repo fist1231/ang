@@ -58,11 +58,12 @@ export class UsersService implements OnInit, OnDestroy {
     }
 
     searchUsers( term: string ): Observable<User[]> {
-                if (!term.trim()) {
-                  // if not search term, return all array.
-                    console.log( 'First search ...' );
-                  return this.getUsers();
-                }
+        if ( !term.trim() )
+        {
+            // if not search term, return all array.
+            console.log( 'First search ...' );
+            return this.getUsers();
+        }
         return this.http.get<User[]>( this.searchUrl + `/${term}` ).pipe(
             tap( _ => this.log( `found users matching "${term}"` ) ),
             catchError( this.handleError<any>( 'searchUsers', [] ) )
@@ -71,9 +72,9 @@ export class UsersService implements OnInit, OnDestroy {
 
 
     getUser( id: number ): Observable<User> {
-        console.log('number = ' + id);
+        console.log( 'number = ' + id );
         const url = `${this.usersUrl}/${id}`;
-        console.log('url = ' + url);
+        console.log( 'url = ' + url );
         return this.http.get<User>( url ).pipe(
             tap( _ => this.log( `fetched user id=${id}` ) ),
             catchError( this.handleError<any>( `getUser id=${id}` ) )
@@ -81,22 +82,25 @@ export class UsersService implements OnInit, OnDestroy {
     }
 
     updateUser( user: User ): Observable<any> {
-        return this.http.put( this.usersUrl, user, httpOptions ).pipe(
+        console.log( 'USER = ' + JSON.stringify( user ) );
+        const url = `${this.usersUrl}/${user._id}`;
+        return this.http.put( url, user, httpOptions ).pipe(
             tap( _ => this.log( `updated hero id=${user.id}` ) ),
             catchError( this.handleError<any>( 'updateUser' ) )
         );
     }
 
     addUser( user: User ): Observable<User> {
-        return this.http.post<User>( this.usersUrl, user, httpOptions ).pipe(
-            tap(( user: User ) => this.log( `added user w/ id=${user.id}` ) ),
+        console.log( 'addUser USER = ' + JSON.stringify( user ) );
+        return this.http.post( this.usersUrl, user, httpOptions ).pipe(
+            tap( _ => this.log( `added user w/ id=${user.id}` ) ),
             catchError( this.handleError<any>( 'addUser' ) )
         );
     }
 
 
     deleteUser( user: User | number ): Observable<User> {
-        const id = typeof user === 'number' ? user : user.id;
+        const id = typeof user === 'number' ? user : user._id;
         const url = `${this.usersUrl}/${id}`;
 
         return this.http.delete<User>( url, httpOptions ).pipe(

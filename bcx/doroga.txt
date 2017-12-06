@@ -1,0 +1,20 @@
+PrimeNg:
+1. npm install primeng --save
+2. npm install font-awesome --save
+3. app.module.ts:
+import { DialogModule } from 'primeng/primeng';
+imports[
+DialogModule
+]
+4. .angular-cli.json:
+      "styles": [
+  		"../node_modules/font-awesome/css/font-awesome.min.css",
+  		"../node_modules/primeng/resources/themes/omega/theme.css",
+  		"../node_modules/primeng/resources/primeng.min.css"
+
+5. Angular animations (required for primeNg):
+npm install --save "@angular/animations"
+  		
+ Angular Material-2:
+ 
+ npm install "@angular2-material"
