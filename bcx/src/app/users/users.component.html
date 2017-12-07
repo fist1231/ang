@@ -2,22 +2,32 @@
 
 	<div class="card">
 		<div class="card-header">
-			<h4 class="float-left">
-				Users
-			</h4>
-		    <button type="button" class="btn btn-success" icon="fa-user-circle" (click)="showAddDialog()">Add User</button>
-			 <input class="float-right" #searchBox id="search-box"
-					(keyup)="search(searchBox.value)" />
+			<div class="row justify-content-md-center align-items-center">
+				<div class="col float-left w-25">
+					<h4 class="float-left">Users</h4>
+				</div>
+				<div class="col w-25 float-righ">
+				</div>
+				<div class="col w-50 float-righ">
+					<input class="float-right" #searchBox id="search-box"
+						(keyup)="search(searchBox.value)" />
+				</div>
+			</div>
 		</div>
 
 		<div class="card-body">
+			<div class="row justify-content-md-end">
+					<button type="button" class="btn btn-success float-righ" icon="fa-user-circle"
+						(click)="showAddDialog()">Add User</button>
+			</div>
 			<div class="row justify-content-md-center align-items-center">
 				<div class="col">
-					<table class="table-striped table-bordered table-hover m-3">
+					<table class="table-striped table-bordered table-hover m-3 w-100">
 						<thead>
 							<tr>
+								<th>Mongo id</th>
 								<th>id</th>
-								<th>name</th>
+								<th class="w-50">name</th>
 								<th>status</th>
 								<th>date</th>
 								<th></th>
@@ -25,14 +35,16 @@
 						</thead>
 						<tbody>
 							<tr *ngFor="let user of users$ | async">
-								<td class="badge p-2 m-1">{{user._id}}</td>
-								<td class="p-2 m-1"><a href="javascript:void(0)" (click)="showDialog(user._id)">{{user.name}}</a></td>
+								<td class="p-2 m-1 font-weight-italic">{{user._id}}</td>
+								<td class="p-2 m-1">{{user.id}}</td>
+								<td class="p-2 m-1 font-weight-bold"><a href="javascript:void(0)"
+									(click)="showUpdateDialog(user._id)">{{user.name}}</a></td>
 								<td class="p-2 m-1">{{user.status}}</td>
 								<td class="p-2 m-1">{{user.created_date | date :
 									'MM/dd/yyyy hh:mm:ss a' : timezone}}</td>
-								<td>
+								<td class="p2 m1 text-center">
 									<button pButton title="delete user"
-										(click)="delete(user)"  icon="fa-remove"></button>
+										(click)="showDeleteDialog(user._id)" icon="fa-remove"></button>
 								</td>
 							</tr>
 						</tbody>
@@ -43,68 +55,146 @@
 	</div>
 </div>
 <div class="card" *ngIf="user; else loading">
-<p-dialog header="Title" [(visible)]="display" [width]="400" modal="true">
-    <p-header>
-        Edit user
-    </p-header>
-   <h1>User Form</h1>
-    <form>
-      <div class="form-group">
-        <label for="name">Id</label>
-        <input [(ngModel)]="user.id" type="text" class="form-control" id="id" name="user.id" required>
-      </div>
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input [(ngModel)]="user.name" type="text" class="form-control" id="name" name="user.name" required>
-      </div>
-      <div class="form-group">
-        <label for="name">Status</label>
-        <input [(ngModel)]="user.status" type="text" class="form-control" id="status" name="user.status" required>
-      </div>
-      <div class="form-group">
-        <label for="name">Date</label>
-        <input [(ngModel)]="user.created_date" type="datetime" class="form-control" id="created_date" name="user.created_date" required>
-      </div>
-    </form>
-    <p-footer>
-      <button type="submit" class="btn btn-primary" icon="fa-close" (click)="updateUser(user)">Save</button>
-      <button type="reset" class="btn btn-danger" icon="fa-close" (click)="hideDialog()">Cancel</button>
-    </p-footer>
-</p-dialog>
+	<p-dialog [(visible)]="displayUpdate" [width]="400"
+		modal="true"> <p-header> Edit user </p-header>
+	<form (ngSubmit)="onSubmit()" #editForm="ngForm">
+		<div class="form-group">
+			<label for="id">Id</label> <input [(ngModel)]="user.id" type="text"
+				class="form-control" id="id" name="id" required minlength="2"
+				pattern="\d*" #id="ngModel">
+		</div>
+		<div *ngIf="id.invalid && (id.dirty || id.touched)"
+			class="alert alert-danger">
+			<div *ngIf="id.errors.required">Id is required.</div>
+			<div *ngIf="id.errors.pattern">Id must contain only digits.</div>
+			<div *ngIf="id.errors.minlength">Id must be at least 2 digits
+				long.</div>
+
+		</div>
+		<div class="form-group">
+			<label for="name">Name</label> <input [(ngModel)]="user.name"
+				type="text" class="form-control" id="name" name="name" required
+				minlength="4" forbiddenName="wtf" #name="ngModel">
+		</div>
+		<!-- 		<div [hidden]="user.name.valid || user.name.pristine"
+			class="alert alert-danger">Name is required</div> -->
+
+		<div *ngIf="name.invalid && (name.dirty || name.touched)"
+			class="alert alert-danger">
+
+			<div *ngIf="name.errors.required">Name is required.</div>
+			<div *ngIf="name.errors.minlength">Name must be at least 4
+				characters long.</div>
+			<div *ngIf="name.errors.forbiddenName">Name cannot be Bob.</div>
+
+		</div>
+		<div class="form-group">
+			<label for="status">Status</label> <input [(ngModel)]="user.status"
+				type="text" class="form-control" id="status" name="user.status">
+		</div>
+		<div class="form-group">
+			<label for="created_date">Date</label> <input
+				[(ngModel)]="user.created_date" type="datetime" class="form-control"
+				id="created_date" name="user.created_date">
+		</div>
+	</form>
+	<p-footer>
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary w-100" icon="fa-close"
+			(click)="updateUser(user)" [disabled]="!editForm.form.valid">Save</button>
+	</div>
+	<div class="form-group">
+		<button type="reset" class="btn btn-secondary w-100" icon="fa-close"
+			(click)="hideUpdateDialog()">Cancel</button>
+	</div>
+	</p-footer> </p-dialog>
 </div>
-    <!-- 
+<!-- 
 	    <button pButton type="button" label="Save"></button>
 	    <button pButton class="btn btn-danger" type="button" (click)="hideDialog()" icon="fa-close" label="Cancel"></button>
 	    -->
 
-	    <div class="card" *ngIf="user; else loading">
-<p-dialog header="Title" [(visible)]="displayAdd" [width]="300" modal="true">
-    <p-header>
-        Create user
-    </p-header>
-   <h1>User Form</h1>
-    <form>
-      <div class="form-group">
-        <label for="name">Id</label>
-        <input [(ngModel)]="user.id" type="text" class="form-control" id="id" name="user.id" required>
-      </div>
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input [(ngModel)]="user.name" type="text" class="form-control" id="name" name="user.name" required>
-      </div>
-      <div class="form-group">
-        <label for="name">Status</label>
-        <input [(ngModel)]="user.status" type="text" class="form-control" id="status" name="user.status" required>
-      </div>
-      <div class="form-group">
-        <label for="name">Date</label>
-        <input [(ngModel)]="user.created_date" type="datetime" class="form-control" id="created_date" name="user.created_date" required>
-      </div>
-    </form>
-    <p-footer>
-      <button type="submit" class="btn btn-primary" icon="fa-close" (click)="createUser(user)">Create</button>
-      <button type="reset" class="btn btn-danger" icon="fa-close" (click)="hideAddDialog()">Cancel</button>
-    </p-footer>
-</p-dialog>
+<div class="card" *ngIf="user; else loading">
+	<p-dialog [(visible)]="displayAdd" [width]="300"
+		modal="true"> <p-header> Create user </p-header>
+	<form (ngSubmit)="onSubmit()" #addForm="ngForm">
+		<div class="form-group">
+			<label for="id">Id</label> <input [(ngModel)]="user.id" type="text"
+				class="form-control" id="id" name="id" required minlength="2"
+				pattern="\d*" #id="ngModel">
+		</div>
+		<div *ngIf="id.invalid && (id.dirty || id.touched)"
+			class="alert alert-danger">
+			<div *ngIf="id.errors.required">Id is required.</div>
+			<div *ngIf="id.errors.pattern">Id must contain only digits.</div>
+			<div *ngIf="id.errors.minlength">Id must be at least 2 digits
+				long.</div>
+
+		</div>
+		<div class="form-group">
+			<label for="name">Name</label> <input [(ngModel)]="user.name"
+				type="text" class="form-control" id="name" name="name" required
+				minlength="4" forbiddenName="wtf" #name="ngModel">
+		</div>
+		<!-- 		<div [hidden]="user.name.valid || user.name.pristine"
+			class="alert alert-danger">Name is required</div> -->
+
+		<div *ngIf="name.invalid && (name.dirty || name.touched)"
+			class="alert alert-danger">
+
+			<div *ngIf="name.errors.required">Name is required.</div>
+			<div *ngIf="name.errors.minlength">Name must be at least 4
+				characters long.</div>
+			<div *ngIf="name.errors.forbiddenName">Name cannot be Bob.</div>
+
+		</div>
+		<div class="form-group">
+			<label for="status">Status</label> <input [(ngModel)]="user.status"
+				type="text" class="form-control" id="status" name="user.status">
+		</div>
+		<div class="form-group">
+			<label for="created_date">Date</label> <input
+				[(ngModel)]="user.created_date" type="datetime" class="form-control"
+				id="created_date" name="user.created_date">
+		</div>
+	</form>
+	<p-footer>
+	<div class="form-group">
+		<button type="submit" class="btn btn-primary w-100" icon="fa-close"
+			(click)="createUser(user)" [disabled]="!addForm.form.valid">Create</button>
+	</div>
+	<div class="form-group">
+		<button type="reset" class="btn btn-secondary w-100" icon="fa-close"
+			(click)="hideAddDialog()">Cancel</button>
+	</div>
+	</p-footer> </p-dialog>
 </div>
-	    
+
+<div class="card" *ngIf="user; else loading">
+	<p-dialog [(visible)]="displayDelete" [width]="400"
+		modal="true"> <p-header> Delete user </p-header>
+	<form>
+		<div class="form-group">
+			<label class="font-weight-bold" for="name">Id:</label> <span>{{user.id}}</span>
+		</div>
+		<div class="form-group">
+			<label class="font-weight-bold" for="name">Name:</label> <span>{{user.name}}</span>
+		</div>
+		<div class="form-group">
+			<label class="font-weight-bold" for="name">Status:</label> <span>{{user.status}}</span>
+		</div>
+		<div class="form-group">
+			<label class="font-weight-bold" for="name">Date:</label> <span>{{user.created_date}}</span>
+		</div>
+	</form>
+	<p-footer>
+	<div class="form-group">
+		<button type="submit" class="btn btn-danger w-100" icon="fa-remove"
+			(click)="deleteUser(user)">Delete</button>
+	</div>
+	<div class="form-group">
+		<button type="reset" class="btn btn-secondary w-100" icon="fa-close"
+			(click)="hideDeleteDialog()">Cancel</button>
+	</div>
+	</p-footer> </p-dialog>
+</div>

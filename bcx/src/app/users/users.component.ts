@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, TemplateRef, NgZone } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 import { of } from 'rxjs/observable/of';
 import 'rxjs/add/operator/debounceTime';
@@ -10,6 +10,7 @@ import { UsersService } from '../users.service';
 import { Subject } from "rxjs/Subject";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { merge } from "rxjs/operator/merge";
 
 
 @Component( {
@@ -31,32 +32,50 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     user$: Observable<User>;
     user: User;
 
-    display: boolean = false;
+    displayUpdate: boolean = false;
     displayAdd: boolean = false;
+    displayDelete: boolean = false;
+    submitted = false;
 
-    constructor( private route: ActivatedRoute, private usersService: UsersService, private modalService: BsModalService ) { }
+    onSubmit() { this.submitted = true; }
 
-    showDialog( id ) {
+    constructor( private route: ActivatedRoute, private usersService: UsersService, private modalService: BsModalService, private _ngZone: NgZone ) { }
+
+    showUpdateDialog( id ) {
 
         console.log( 'userid = ' + id );
         this.usersService.getUser( id ).subscribe( usr => {
             this.user = usr;
-            this.display = true;
+            this.displayUpdate = true;
         } );
     }
 
-    hideDialog() {
-        this.display = false;
+    hideUpdateDialog() {
+        this.displayUpdate = false;
     }
 
     showAddDialog() {
 
-        this.user = new User();
+        //        this.user = { _id: "", id: "", name: "", desc: "", create_date: "", created_date: "" };
+        this.user = new User( "", "" );
         this.displayAdd = true;
     }
 
     hideAddDialog() {
         this.displayAdd = false;
+    }
+
+    showDeleteDialog( id ) {
+
+        console.log( 'userid = ' + id );
+        this.usersService.getUser( id ).subscribe( usr => {
+            this.user = usr;
+            this.displayDelete = true;
+        } );
+    }
+
+    hideDeleteDialog() {
+        this.displayDelete = false;
     }
 
     ngOnInit() {
@@ -75,8 +94,9 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         //        this.route.data.map( x => x.users ).subscribe( usrs => this.users = usrs );
     }
 
-    delete( user: User ): void {
+    deleteUser( user: User ): void {
         //        this.users = this.users.filter(u => u !== user);
+        this.initSearch();
         this.usersService.deleteUser( user ).subscribe(
             usr => { },
             err => {
@@ -84,6 +104,8 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
             },
             () => {
                 console.log( 'Completed Delete user' );
+                this.searchTerms.next( '' );
+                this.hideDeleteDialog();
                 //                this.users$.subscribe(x => {
                 //                    this.users = this.users.filter(u => u !== user);
                 //                });
@@ -93,44 +115,47 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
     updateUser( user: User ): void {
+        this.initSearch();
         this.usersService.updateUser( user ).subscribe(
             x => {
-
+                console.log( 'Updating user ...' );
             },
             err => {
                 console.log( 'Update user ERROR: ' + err );
             },
             () => {
                 console.log( 'Completed update user' );
-                this.initSearch();
-                this.display = false;
+                //                this.searchTerms.next( '' );
+                //                this.searchTerms.next( 'a' );
+                this._ngZone.run(() => {
+                    this.searchTerms.next( '' );
+                } )
+                this.hideUpdateDialog();
             }
         );
     }
 
     createUser( user: User ) {
+        console.log( 'User: ' + JSON.stringify( user ) );
+        //        this.users$.subscribe( console.log );
+        //        //        console.log( 'Users$: ' + JSON.stringify( this.users$ ) );
+        //        let merged = this.users$.merge( of( user ) );
+
+        this.initSearch();
         this.usersService.addUser( user ).subscribe(
-            usr => { },
+            usr => {
+            },
             err => { console.log( 'Create user ERROR: ' + err ); },
             () => {
+                this.searchTerms.next( '' );
+                //                        this.users$.merge( of( user ) );
                 console.log( 'Create user completed' );
-                this.displayAdd = false;
+                this.hideAddDialog();
 
             }
 
         );
 
-        //        this.usersService.addUser(user).subscribe(
-        //            x => {
-        //            },
-        //            err => {
-        //                console.log('Delete user ERROR: ' + err);
-        //            },
-        //            () => {
-        //                console.log('Delete user completed');
-        //                this.displayAdd = false;
-        //            }
-        //        );
     }
 
 

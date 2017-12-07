@@ -42,7 +42,7 @@ import { ButtonModule } from 'primeng/primeng';
 import { MenubarModule } from 'primeng/primeng';
 
 
-@NgModule({
+@NgModule( {
     declarations: [
         AppComponent,
         BlocksComponent,
@@ -73,5 +73,5 @@ import { MenubarModule } from 'primeng/primeng';
     providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver, UsersResolver, UsersService, UserDetailsResolver],
     bootstrap: [AppComponent],
     //    exports: [BsDropdownModule, TooltipModule, ModalModule]
-})
+} )
 export class AppModule { }

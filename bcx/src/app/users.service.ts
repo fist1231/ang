@@ -43,9 +43,12 @@ export class UsersService implements OnInit, OnDestroy {
         //      const users: User[] = [ {id: 'id1', name: 'name-1', desc: 'desc-1'}, {id: 'id2', name: 'name-2', desc: 'desc-2'} ];
 
 
-        const users$: Observable<any> = this.http.get( this.usersUrl )
+        const users$: Observable<User[]> = this.http.get<User[]>( this.usersUrl )
             .pipe(
-            catchError( this.handleError( 'getHeroes', [] ) )
+            map( x => x.sort(( a, b ) => {
+                return Number( a.id ) < Number( b.id ) ? -1 : 1;
+            } ) ),
+            catchError( this.handleError( 'getUsers', [] ) )
             );
 
         this.http.get( this.usersUrl ).subscribe( users => {
@@ -64,10 +67,14 @@ export class UsersService implements OnInit, OnDestroy {
             console.log( 'First search ...' );
             return this.getUsers();
         }
-        return this.http.get<User[]>( this.searchUrl + `/${term}` ).pipe(
+        const users$: Observable<User[]> = this.http.get<User[]>( this.searchUrl + `/${term}` ).pipe(
+            map( x => x.sort(( a, b ) => {
+                return Number( a.id ) < Number( b.id ) ? -1 : 1;
+            } ) ),
             tap( _ => this.log( `found users matching "${term}"` ) ),
             catchError( this.handleError<any>( 'searchUsers', [] ) )
         );
+        return users$;
     }
 
 
