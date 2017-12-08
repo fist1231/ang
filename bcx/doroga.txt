@@ -18,3 +18,9 @@ npm install --save "@angular/animations"
  Angular Material-2:
  
  npm install "@angular2-material"
+ 
+ 
+ Reactive Forms:
+ ==============
+ npm install --save "@angular/forms"
+ 

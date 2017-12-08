@@ -23,6 +23,7 @@ export class UsersService implements OnInit, OnDestroy {
 
     private usersUrl = 'http://localhost:3333/nress/users';  // URL to web api
     private searchUrl = 'http://localhost:3333/nress/search';  // URL to web api
+    private findUserByIdUrl = 'http://localhost:3333/nress/user';  // URL to web api
 
     ngOnDestroy(): void {
         //        throw new Error( "Method not implemented." );
@@ -77,6 +78,15 @@ export class UsersService implements OnInit, OnDestroy {
         return users$;
     }
 
+    
+    findUserById( id: string ): Observable<User[]> {
+        const users$: Observable<User[]> = this.http.get<User[]>( this.findUserByIdUrl + `/${id}` ).pipe(
+            tap( _ => this.log( `findUserById found user matching id: "${id}"` ) ),
+            catchError( this.handleError<any>( 'findUserById', [] ) )
+        );
+        return users$;
+    }
+    
 
     getUser( id: number ): Observable<User> {
         console.log( 'number = ' + id );

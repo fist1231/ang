@@ -1,5 +1,37 @@
 <div class="container-fluid">
 
+	<div class="ui-widget-header" style="padding:4px 10px; border-bottom: 0 none">
+	    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+	    <input #gb type="text" pInputText size="50" placeholder="search">
+	    
+  		<button type="button" pButton class="float-right" icon="fa-user-plus" (click)="showAddDialog()" label="Add user" title="Create new user"></button>
+	    
+	</div>
+	<p-dataTable #dt [value]="users" [editable]="true" [reorderableColumns]="true"
+	 [loading]="loading" loadingIcon="fa-spinner" [rows]="10" [paginator]="true"  [pageLinks]="3" [rowsPerPageOptions]="[5,10,25,50]" [totalRecords]="totalRecords" 
+	 [globalFilter]="gb" [sortField]="sortF" [responsive]="true" 
+	 selectionMode="single" [(selection)]="selectedUser" [contextMenu]="cm">
+	    <p-column field="id" header="Id" [sortable]="true" [style]="{'width':'5%'}"></p-column>
+	    <p-column field="name" header="Name" [editable]="false" [sortable]="true">
+			<ng-template let-user="rowData" pTemplate="body">
+				<a href="javascript:void(0)" (click)="showUpdateDialog(user._id)">{{user.name}}</a>			
+			</ng-template>    
+	    </p-column>
+	    <p-column field="status" header="Status" [sortable]="true" [style]="{'width':'10%'}"></p-column>
+	    <p-column field="created_date" header="Created Date" [sortable]="true" [style]="{'width':'15%'}"></p-column>
+	    <p-column field="_id" header="Mongo Id" [sortable]="true" [style]="{'width':'15%'}"></p-column>
+	    <p-column header="" [style]="{'width':'5%', 'text-align':'center'}">
+			<ng-template let-user="rowData" pTemplate="body">    
+				<button pButton title="Delete user"
+					(click)="showDeleteDialog(user._id)" icon="fa-user-times"></button>
+			</ng-template>
+	    </p-column>
+	</p-dataTable>
+	<p-contextMenu #cm [model]="items"></p-contextMenu>
+	<button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="dt.exportCSV()"></button>
+
+	<hr/>
+
 	<div class="card">
 		<div class="card-header">
 			<div class="row justify-content-md-center align-items-center">
@@ -54,65 +86,73 @@
 		</div>
 	</div>
 </div>
+
+
 <div class="card" *ngIf="user; else loading">
-	<p-dialog [(visible)]="displayUpdate" [width]="400"
-		modal="true"> <p-header> Edit user </p-header>
-	<form (ngSubmit)="onSubmit()" #editForm="ngForm">
-		<div class="form-group">
-			<label for="id">Id</label> <input [(ngModel)]="user.id" type="text"
-				class="form-control" id="id" name="id" required minlength="2"
-				pattern="\d*" #id="ngModel">
-		</div>
-		<div *ngIf="id.invalid && (id.dirty || id.touched)"
+	<p-dialog [(visible)]="displayUpdate" [width]="400" modal="true"> 
+		<p-header> Edit user </p-header>
+		<form [formGroup]="updateUserForm" novalidate>		
+			<div class="form-group">
+				<label for="id">Id</label> 
+				<input id="id" class="form-control" formControlName="id" >
+			</div>
+		<div *ngIf="updateUserForm.controls['id'].invalid && (updateUserForm.controls['id'].dirty || updateUserForm.controls['id'].touched)"
 			class="alert alert-danger">
-			<div *ngIf="id.errors.required">Id is required.</div>
-			<div *ngIf="id.errors.pattern">Id must contain only digits.</div>
-			<div *ngIf="id.errors.minlength">Id must be at least 2 digits
-				long.</div>
-
+			<div *ngIf="updateUserForm.controls['id'].errors.required">Id is required.</div>
+			<div *ngIf="updateUserForm.controls['id'].errors.pattern">Id must start with 1 and contain only digits.</div>
+			<div *ngIf="updateUserForm.controls['id'].errors.minlength">Id must be at least 2 digits long.</div>
+<!-- 
+			<div *ngIf="updateUserForm.controls['id'].errors.userNotTaken">
+				{{updateUserForm.controls['id'].errors.userNotTaken.value['size']}} user(s) already exists with this id: 
+				<ol>
+					<li *ngFor="let uus of updateUserForm.controls['id'].errors.userNotTaken.value['usrs']">id: {{uus.id}}; name: {{uus.name}}</li>
+				</ol>
+			</div>
+-->			
 		</div>
-		<div class="form-group">
-			<label for="name">Name</label> <input [(ngModel)]="user.name"
-				type="text" class="form-control" id="name" name="name" required
-				minlength="4" forbiddenName="wtf" #name="ngModel">
-		</div>
-		<!-- 		<div [hidden]="user.name.valid || user.name.pristine"
-			class="alert alert-danger">Name is required</div> -->
-
-		<div *ngIf="name.invalid && (name.dirty || name.touched)"
+			<div class="form-group">
+				<label for="name">Name</label> 
+				<input id="name" class="form-control" formControlName="name">
+			</div>
+		<div *ngIf="updateUserForm.controls['name'].invalid && (updateUserForm.controls['name'].dirty || updateUserForm.controls['name'].touched)"
 			class="alert alert-danger">
-
-			<div *ngIf="name.errors.required">Name is required.</div>
-			<div *ngIf="name.errors.minlength">Name must be at least 4
-				characters long.</div>
-			<div *ngIf="name.errors.forbiddenName">Name cannot be Bob.</div>
-
+			<div *ngIf="updateUserForm.controls['name'].errors.required">Name is required.</div>
+			<div *ngIf="updateUserForm.controls['name'].errors.minlength">Name must be at least 4 characters long.</div>
+			<div *ngIf="updateUserForm.controls['name'].errors.forbiddenName">Names like {{updateUserForm.controls['name'].errors.forbiddenName.value}} forbidden.</div>
 		</div>
-		<div class="form-group">
-			<label for="status">Status</label> <input [(ngModel)]="user.status"
-				type="text" class="form-control" id="status" name="user.status">
-		</div>
-		<div class="form-group">
-			<label for="created_date">Date</label> <input
-				[(ngModel)]="user.created_date" type="datetime" class="form-control"
-				id="created_date" name="user.created_date">
-		</div>
-	</form>
-	<p-footer>
+			<div class="form-group">
+				<label for="status">Status</label> 
+				<!-- <input id="status" class="form-control" formControlName="status">-->
+				<p-dropdown [options]="statuses" optionLabel="name" formControlName="status"></p-dropdown>
+			</div>
+			<div class="form-group">
+				<label for="created_date">Created Date</label>
+				<!-- <p-calendar id="created_date" formControlName="created_date"></p-calendar>-->
+			</div>
+		</form>	
+			<p>Form value: {{ updateUserForm.value | json }}</p>
+			<p>Form status: {{ updateUserForm.status | json }}</p>
+		<p-footer>
+		
 	<div class="form-group">
 		<button type="submit" class="btn btn-primary w-100" icon="fa-close"
-			(click)="updateUser(user)" [disabled]="!editForm.form.valid">Save</button>
+			(click)="updateUser(user)" [disabled]="!updateUserForm.valid">Save</button>
 	</div>
 	<div class="form-group">
 		<button type="reset" class="btn btn-secondary w-100" icon="fa-close"
 			(click)="hideUpdateDialog()">Cancel</button>
 	</div>
-	</p-footer> </p-dialog>
+		
+		    <button type="submit"
+		            [disabled]="updateUserForm.pristine" class="btn btn-success">Save</button> &nbsp;
+		    <button type="reset" (click)="revert()"
+		            [disabled]="updateUserForm.pristine" class="btn btn-danger">Revert</button>
+		
+		</p-footer> 
+	</p-dialog>
 </div>
-<!-- 
-	    <button pButton type="button" label="Save"></button>
-	    <button pButton class="btn btn-danger" type="button" (click)="hideDialog()" icon="fa-close" label="Cancel"></button>
-	    -->
+
+
 
 <div class="card" *ngIf="user; else loading">
 	<p-dialog [(visible)]="displayAdd" [width]="300"
@@ -149,13 +189,13 @@
 
 		</div>
 		<div class="form-group">
-			<label for="status">Status</label> <input [(ngModel)]="user.status"
-				type="text" class="form-control" id="status" name="user.status">
+			<label for="status">Status</label> 
+			<p-dropdown [(ngModel)]="selectedStatus" [options]="statuses" optionLabel="name" id="status" name="user.status"></p-dropdown>	
+						
 		</div>
 		<div class="form-group">
-			<label for="created_date">Date</label> <input
-				[(ngModel)]="user.created_date" type="datetime" class="form-control"
-				id="created_date" name="user.created_date">
+			<label for="created_date">Date</label> 
+<!-- 			<p-calendar [(ngModel)]="user.created_date" name="user.created_date"></p-calendar> -->
 		</div>
 	</form>
 	<p-footer>

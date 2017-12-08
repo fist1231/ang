@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
             { label: 'Dashboard', icon: 'fa-desktop', routerLink: ['/dashboard'] },
             { label: 'Blocks', icon: 'fa-chain', routerLink: ['/blocks'] },
             { label: 'Table', icon: 'fa-table', routerLink: ['/blockTable'] },
-            { label: 'Table 2', icon: 'fa-th-list', routerLink: ['/blockTableSubs'] },
+            { label: 'Table 2', icon: 'fa-th-list', routerLink: ['/blockTableSubj'] },
             { label: 'Users', icon: 'fa-user', routerLink: ['/users'] },
             //            {
             //                label: 'File',

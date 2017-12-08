@@ -11,6 +11,14 @@ import { Subject } from "rxjs/Subject";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { merge } from "rxjs/operator/merge";
+import { MenuItem } from "primeng/primeng";
+import { FormControl, FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+
+
+interface Status {
+    name: string,
+    code: string[]
+}
 
 
 @Component( {
@@ -18,11 +26,9 @@ import { merge } from "rxjs/operator/merge";
     templateUrl: './users.component.html',
     styleUrls: ['./users.component.css']
 } )
-export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    ngAfterViewInit(): void {
-        this.searchTerms.next( '' );
-    }
+
+export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
     users: User[];
     users$: Observable<User[]>;
@@ -37,15 +43,78 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     displayDelete: boolean = false;
     submitted = false;
 
+    selectedUser: User;
+    items: MenuItem[];
+
+    updateUserForm: FormGroup;
+    
+    statuses: Status[];
+    selectedStatus: Status;
+    
+    //    updateUserForm = new FormGroup( {
+    //        id: new FormControl(),
+    //        name: new FormControl(),
+    //        status: new FormControl(),
+    //        created_date: new FormControl()
+    //    } );
+
+    //    id = new FormControl();
+    //    name = new FormControl();
+    //    status = new FormControl();
+    //    created_date = new FormControl();
+
+
     onSubmit() { this.submitted = true; }
 
-    constructor( private route: ActivatedRoute, private usersService: UsersService, private modalService: BsModalService, private _ngZone: NgZone ) { }
+    constructor( private route: ActivatedRoute
+        , private usersService: UsersService
+        , private modalService: BsModalService
+        , private _ngZone: NgZone
+        , private fb: FormBuilder
+    ) {
+        this.createStatusList();
+        this.createUpdateUserForm();
+        //        this.setUpdateFormValues()
+    }
+    
+    createStatusList() {
+        this.statuses = [
+                        {name: 'Pending', code: ['pending']},
+                        {name: 'Ongoing', code: ['ongoing']},
+                        {name: 'Completed', code: ['completed']}
+                    ];
+        
+    }
+
+    createUpdateUserForm() {
+        this.updateUserForm = this.fb.group( {
+            id: ['', [Validators.required, Validators.minLength( 2 ), Validators.pattern( /^[1-9][0-9]*$/ )] /*, this.userNotTakenValidator.bind( this )*/],
+            name: ['', [Validators.required, Validators.minLength( 4 ), forbiddenNameValidator( /wtf/i )]],
+            status:  this.statuses[0],
+            created_date: Date,
+        } );
+    }
+
+    setUpdateUserFormValues( user: User ) {
+//        let st = this.statuses.map(x=>{console.log(x);return x}).find(x => x.code[0] === user.status[0]);
+        let st = this.statuses.find(x => x.code[0] === user.status[0]);
+        this.updateUserForm.setValue( {
+            id: user.id,
+            name: user.name,
+            status: st,
+            created_date: user.created_date,
+        } );
+    }
+
+
 
     showUpdateDialog( id ) {
 
         console.log( 'userid = ' + id );
         this.usersService.getUser( id ).subscribe( usr => {
+            console.log('--------------- user = ' + JSON.stringify(usr));
             this.user = usr;
+            this.setUpdateUserFormValues( this.user );
             this.displayUpdate = true;
         } );
     }
@@ -57,7 +126,7 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     showAddDialog() {
 
         //        this.user = { _id: "", id: "", name: "", desc: "", create_date: "", created_date: "" };
-        this.user = new User( "", "" );
+        this.user = new User( "", "", ["pending"], new Date() );
         this.displayAdd = true;
     }
 
@@ -81,11 +150,24 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnInit() {
         //        this.getUsers();
         this.initSearch();
+        this.populateContextMenu();
     }
 
+    ngAfterViewInit(): void {
+        this.searchTerms.next( '' );
+    }
 
     ngOnDestroy(): void {
         //        throw new Error( "Method not implemented n." );
+    }
+
+    populateContextMenu() {
+        this.items = [
+            { label: 'Add new', icon: 'fa-plus', command: ( event ) => this.showAddDialog() },
+            { label: 'Update', icon: 'fa-search', command: ( event ) => this.showUpdateDialog( this.selectedUser._id ) },
+            { label: 'Delete', icon: 'fa-close', command: ( event ) => this.showDeleteDialog( this.selectedUser._id ) }
+        ];
+
     }
 
     getUsers() {
@@ -116,6 +198,21 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
 
     updateUser( user: User ): void {
         this.initSearch();
+        
+        const formModel = this.updateUserForm.value;
+
+        console.log( '****************************** user.status: ' + user.status );
+        console.log( '****************************** user.create_date: ' + user.create_date );
+
+         user.name = formModel.name;
+         user.status = formModel.status['code'];
+         user.create_date = formModel.create_date;
+         console.log( '****************************** Before Updating user: ' + JSON.stringify(user) );
+         
+        console.log( '****************************** formModel.name: ' + formModel.name );
+        console.log( '****************************** formModel.status[code]: ' + formModel.status['code'] );
+        console.log( '****************************** formModel.create_date: ' + formModel.create_date );
+        
         this.usersService.updateUser( user ).subscribe(
             x => {
                 console.log( 'Updating user ...' );
@@ -182,6 +279,19 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
                         switchMap((term: string) => this.usersService.searchUsers(term)),
                       );
         */
+
+        this.users$.subscribe(
+            usr => {
+                console.log( '' );
+                this.users = usr;
+            },
+            err => {
+                console.log( '' );
+            },
+            () => {
+                console.log( '' );
+            }
+        );
     }
 
     getUser() {
@@ -194,5 +304,62 @@ export class UsersComponent implements OnInit, OnDestroy, AfterViewInit {
         this.modalRef = this.modalService.show( template, { user: this.user$ } );
     }
 
+    userNotTakenValidator( control: AbstractControl ) { //: ValidatorFn {
+        const id = control.value;
+        let result: boolean;
+        return this.usersService.findUserById( id )
+            .map(
+                usr => {
+                    console.log( 'checkUserNotTaken search user id = ' + id );
+                    console.log( 'checkUserNotTaken usr = ' + JSON.stringify( usr ) );
+                    console.log( 'checkUserNotTaken usr.length = ' + usr.length );
+                    if ( usr && usr.length > 0 ) {
+                        console.log( 'checkUserNotTaken found user with matching id = ' + usr[0].id );
+                        console.log( 'checkUserNotTaken number of users with matching id: ' + usr.length );
+                        let result = usr.find( x => x.id === id ) != null;
+                        return result ? {userNotTaken: {value: {size: usr.length, usrs: usr}}}: null;
+                    } else {
+                        
+                        console.log( 'checkUserNotTaken not found user with matching id = ' + id );
+                        return null;
+                    }
+                }
+            );
+        //            .subscribe(
+        //                usr => {
+        //                    console.log( 'checkUserNotTaken search user id = ' + id );
+        //                    console.log( 'checkUserNotTaken usr = ' + JSON.stringify(usr) );
+        //                    if(usr) {
+        //                        console.log( 'checkUserNotTaken found user with matching id = ' + usr[0].id );
+        //                        console.log( 'checkUserNotTaken number of users with matching id: ' + usr.length );
+        //                        return result = usr.find(x => x.id === id) != null;
+        //                    } else {
+        //                        console.log( 'checkUserNotTaken not found user with matching id = ' + id );
+        //                    }
+        //                },
+        //                err => { console.log( 'checkUserNotTaken user ERROR: ' + err ); },
+        //                () => {
+        //                    console.log( 'checkUserNotTaken user completed' );
+        //                }
+        //
+        //            );
 
+        //        return result ? 
+
+        //        return (control: AbstractControl): {[key: string]: any} => {
+        //            const forbidden = result;
+        //            return result ? {'userNotTaken': {value: control.value}} : null;
+        //        };
+
+    }
+
+
+
+}
+
+export function forbiddenNameValidator( nameRe: RegExp ): ValidatorFn {
+    return ( control: AbstractControl ): { [key: string]: any } => {
+        const forbidden = nameRe.test( control.value );
+        return forbidden ? { 'forbiddenName': { value: control.value } } : null;
+    };
 }

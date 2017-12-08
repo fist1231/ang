@@ -37,9 +37,15 @@ import { UserDetailsResolver } from './user-details/user-details.resolver';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { ReactiveFormsModule } from '@angular/forms'; 
+
 import { DialogModule } from 'primeng/primeng';
 import { ButtonModule } from 'primeng/primeng';
 import { MenubarModule } from 'primeng/primeng';
+import {DataTableModule,SharedModule} from 'primeng/primeng';
+import {ContextMenuModule} from 'primeng/primeng';
+import {DropdownModule} from 'primeng/primeng';
+import {CalendarModule} from 'primeng/primeng';
 
 
 @NgModule( {
@@ -68,7 +74,8 @@ import { MenubarModule } from 'primeng/primeng';
         DataTablesModule.forRoot(),
         HttpClientModule,
         BrowserAnimationsModule,
-        DialogModule, ButtonModule, MenubarModule
+        ReactiveFormsModule,
+        DialogModule, ButtonModule, MenubarModule, DataTableModule, ContextMenuModule, DropdownModule, CalendarModule 
     ],
     providers: [BlockServiceTs, MessageService, TransactionResolver, BlockDetailResolver, UsersResolver, UsersService, UserDetailsResolver],
     bootstrap: [AppComponent],
