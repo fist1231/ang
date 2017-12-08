@@ -20,10 +20,11 @@ const httpOptions = {
 @Injectable()
 export class UsersService implements OnInit, OnDestroy {
 
-
-    private usersUrl = 'http://localhost:3333/nress/users';  // URL to web api
-    private searchUrl = 'http://localhost:3333/nress/search';  // URL to web api
-    private findUserByIdUrl = 'http://localhost:3333/nress/user';  // URL to web api
+    private host = 'http://192.168.99.100:3333';
+    
+    private usersUrl = this.host + '/nress/users';  // URL to web api
+    private searchUrl = this.host + '/nress/search';  // URL to web api
+    private findUserByIdUrl = this.host + '/nress/user';  // URL to web api
 
     ngOnDestroy(): void {
         //        throw new Error( "Method not implemented." );
