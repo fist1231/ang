@@ -20,8 +20,31 @@ const httpOptions = {
 @Injectable()
 export class UsersService implements OnInit, OnDestroy {
 
-    private host = 'http://192.168.99.100:3333';
-    
+    /*  
+    * nginx config:
+      http {
+      upstream users-node {
+          server 192.168.99.100:31533;
+  #        server 192.168.99.101:31533;
+      }
+  
+      server {
+          listen 3333;
+  
+          location / {
+              proxy_pass http://users-node;
+          }
+      }
+     }
+    *
+    *
+    *
+    */
+
+    //    private host = 'http://192.168.99.100:3333';
+    //    private host = 'http://192.168.99.100:31533';
+    private host = 'http://127.0.0.1:3333';
+
     private usersUrl = this.host + '/nress/users';  // URL to web api
     private searchUrl = this.host + '/nress/search';  // URL to web api
     private findUserByIdUrl = this.host + '/nress/user';  // URL to web api
@@ -79,7 +102,7 @@ export class UsersService implements OnInit, OnDestroy {
         return users$;
     }
 
-    
+
     findUserById( id: string ): Observable<User[]> {
         const users$: Observable<User[]> = this.http.get<User[]>( this.findUserByIdUrl + `/${id}` ).pipe(
             tap( _ => this.log( `findUserById found user matching id: "${id}"` ) ),
@@ -87,7 +110,7 @@ export class UsersService implements OnInit, OnDestroy {
         );
         return users$;
     }
-    
+
 
     getUser( id: number ): Observable<User> {
         console.log( 'number = ' + id );
