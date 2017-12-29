@@ -51,3 +51,15 @@ this replaces the changes in your working tree with the last content in HEAD. Ch
 git fetch origin
 git reset --hard origin/master
 to drop all local changes and commits, fetch the latest history from the server and point local master branch at it.
+
+
+Exclude from commit:
+===================
+For a File
+
+git add -u
+git reset -- main/dontcheckmein.txt
+For a folder
+
+git add -u
+git reset -- main/*
