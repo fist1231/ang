@@ -72,3 +72,27 @@ Run following command to enable credential caching:
 
 $ git config credential.helper store
 $ git push https://github.com/repo.git
+
+=================================================
+git branch	- list branches
+git checkout branch/master	- switch branches
+
+=== if changes in the wrong branch:
+1. git stash
+2. git checkout correct-branch
+3. git stash pop
+
+git stash list	- check stashes
+
+git stash list [<options>]
+git stash show [<stash>]
+git stash drop [-q|--quiet] [<stash>]
+git stash ( pop | apply ) [--index] [-q|--quiet] [<stash>]
+git stash branch <branchname> [<stash>]
+git stash [push [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
+	     [-u|--include-untracked] [-a|--all] [-m|--message <message>]]
+	     [--] [<pathspec>]]
+git stash clear
+git stash create [<message>]
+git stash store [-m|--message <message>] [-q|--quiet] <commit>
+
