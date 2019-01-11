@@ -20,6 +20,12 @@ git push origin master
 git pull
 
 
+if new packages were added to package.json, do:
+npm init
+npm run dev
+
+
+
 3. Commit and push to:
 ======================
 
@@ -95,4 +101,87 @@ git stash [push [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]
 git stash clear
 git stash create [<message>]
 git stash store [-m|--message <message>] [-q|--quiet] <commit>
+
+
+==============================================================
+merge branches:
+
+(on branch development)$ git merge master
+(resolve any merge conflicts if there are any)
+git checkout master
+git merge development (there won't be any conflicts now)
+
+git add -A
+git commit -m "message"
+git push origin master
+
+
+=================================================================
+Workflow:
+
+1. Start working on a new feature
+## clone repo
+git clone
+## create branch
+git branch new_branch
+## switch to branch
+git checkout new_branch
+
+2. Commit changes
+## Start working
+## done working
+## stage and commit
+git add -A
+git commit -m "message"
+
+3. Merge new feature branch to local master
+%%%% (extra) %%%%
+## if commit history is dirty, rebase interactively to squash redundant commits before merging
+git rebase -i master
+
+~~ text editor:
+~~~~~~~~~~~~~~~~~~~~~~
+pick 681bd1c Commit #1
+squash eabac68 Commit #2 to be squashed
+~~~~~~~~~~~~~~~~~~~~~~
+%%%% (end extra) %%%%%
+
+## merge with local master
+git checkout master
+git merge new_branch
+## delete branch when done
+git branch -d new_branch
+
+4. Publishing to origin central repo
+git fetch origin
+## see what's changed (add --stat to see files)
+git log master..origin/maser --stat   // {what's new in origin/master} 
+git log origin/master..master         // {what's new in master}
+
+## if there are changes in remote master, rebase. Else - push yours:
+git rebase origin/master
+
+## push local changes to central repo
+git push origin master
+
+=========== End Workflow ================================
+
+
+Remote branches.
+
+To even see remote branches, fetch origin (or any from git remote -v):
+git fetch origin
+
+Now can list remote branches:
+git branch -r
+
+
+1. to just get the branch with detached head without permanently tracking it:
+git checkout central/branch
+
+2. to permanently checkout and track it:
+git checkout central/branch --track
+
+3. delete remote branch:
+git push origin --delete remote_branch
 
